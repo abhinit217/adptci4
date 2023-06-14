@@ -456,7 +456,7 @@
                     </div>
                     <div class="col-md-12 col-sm-12 bottom">
                         <ul class="legal centered text-dark mb-0" style="list-style-type: none;">
-                            <li><a href="javascript:void(0);" class="text-dark font-14px">Copyright and permissions | ©
+                            <li><a href="https://www.ilri.org/rights-and-permissions" class="text-dark font-14px">Copyright and permissions | ©
                                     2022 International Livestock Research Institute |
                                     <i class="fa fa-cc"></i> | <i class="fa fa-user-circle-o"></i></a></li>
                         </ul>
