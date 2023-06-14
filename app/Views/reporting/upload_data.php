@@ -115,6 +115,7 @@
                                 </div>
                                 <div class="card-body p-3">
                                     <form id="submit_data">
+                                        <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" />
                                         <div class="form">
                                             <div class="row">
                                                 <div class="col-sm-12 col-md-12 col-lg-12">
@@ -377,45 +378,28 @@
 <script src="<?php echo base_url(); ?>include/assets/plugins/wysiwyag/jquery.richtext.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/multi-select/0.9.12/js/jquery.multi-select.min.js" ></script>
 <script type="text/javascript">
+
+    var csrfName = '<?= csrf_token() ?>';
+    var csrfHash = '<?= csrf_hash() ?>';
+    var initialcall = true;
     
     $(function() {
-        // $('select').selectpicker();
-        // Initialize Sisyphus
-        // $("#submit_data").sisyphus();
-        // $('.default_indicatorcomment').trigger('change');
-
-        // $('select').selectpicker();
-
-        // //Date picker
-        // $('.picker').datepicker({
-        //     format: 'yyyy-mm-dd',
-        //     autoclose: true
-        // });
-
-        // //month picker
-        // $('.monthpicker').datepicker({
-        //     format: 'yyyy-mm',
-        //     autoclose: true,
-        //     viewMode: "months",
-        //     minViewMode: "months"
-        // });
-
         getIndicatorList();
         $('[name="indicator"]').multipleSelect({
             filter: true
         });
-        $('[name="country"]').trigger('change');
-        // if(<?php echo $lkp_user_list['role_id']; ?>==5){
-        //     $('[name="country"]').trigger('change');
-        // }
-        $('[data-toggle="popover"]').popover();   
+        
+        $('[data-toggle="popover"]').popover();
     });
+
     $('body').on('change', '.year', function() {
-        getIndicatorData();
+        // getIndicatorData();
     });
+
     $('body').on('change', '.county', function() {
-        getIndicatorData();
+        // getIndicatorData();
     });
+
     $('body').on('change', '.measure_level', function() {
         $elem = $(this);
         measure_level= this.value;
@@ -424,14 +408,24 @@
         }else{
             $('.sub_national').show();
         }
-        getIndicatorList();
-        getIndicatorData();
         $.ajax({
             url: "<?php echo base_url(); ?>reporting/upload_get_dimensions",
             type: "POST",
             dataType: "json",
             data: {
-                measure_level: measure_level
+                year_id: $('[name="year"]').val(),
+                measure_level: measure_level,
+                csrf_test_name: csrfHash
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
+
+                getIndicatorData();
             },
             error: function() {
                 // setTimeout(function() {
@@ -442,26 +436,38 @@
                 if (response.status == 1) {
                     if (response.result.lkp_dimensions_list.length > 0) {
                         var CHILD_HTML = '';
-                        var CHILD_HTML_EMPTY = '';
-                        var CHILD_HTML_EMPTY1 = '';
-                        var CHILD_HTML_EMPTY2 = '';
                         CHILD_HTML += '<option value = "">Select Dimension</option>';
-                        CHILD_HTML_EMPTY += '<option value = "">Select Category</option>';
-                        CHILD_HTML_EMPTY1 += '<option value = "">Select Indicator</option>';
-                        CHILD_HTML_EMPTY2 += '<option value = "">Select Sub-Dimension</option>';
                         for (var field of response.result.lkp_dimensions_list) {
                             CHILD_HTML += '<option value = "' + field.dimensions_id + '">' + field.dimensions_name + '</option>';
                         };
                         $('.dimension1').html(CHILD_HTML);
+
+                        var CHILD_HTML_EMPTY = '';
+                        CHILD_HTML_EMPTY += '<option value = "">Select Category</option>';
                         $('.category1').html(CHILD_HTML_EMPTY);
+
+                        var CHILD_HTML_EMPTY1 = '';
+                        CHILD_HTML_EMPTY1 += '<option value = "">Select Indicator</option>';
                         $('.indicators1').html(CHILD_HTML_EMPTY1);
+
+                        var CHILD_HTML_EMPTY2 = '';
+                        CHILD_HTML_EMPTY2 += '<option value = "">Select Sub-Dimension</option>';
                         $('.subdimension1').html(CHILD_HTML_EMPTY2);
-                    } else {
+
+
+                        var programs = '';
+                        if (response.result.lkp_indicators_list.length > 0) {
+                            programs += '<option value="" >Search Indicator ... </option>';
+                            
+                            for (var field of response.result.lkp_indicators_list) {
+                                // CHILD_HTML += '<option value = "' + field.indicator_id + '">' + field.indicator_name + '</option>';
+                                programs += '<option value="' + field.indicator_id + '" >' + field.indicator_name + '</option>';
+                            };
+                            // $('.indicators').html(CHILD_HTML);
+                        }
+                        $('[name="indicator"]').html(programs);
+                        $('[name="indicator"]').multipleSelect('refresh');
                     }
-                } else {
-                        // setTimeout(function() {
-                        //     $('.' + classname).empty();
-                        // }, 500);
                 }
             }
         });
@@ -472,71 +478,12 @@
         $('.dimension_div').hide();
         $('.indicator_div').show();
     });
+
     $('body').on('click', '.search_by_dimension', function(){
         $elem = $(this);
         $('.dimension_div').show();
         $('.indicator_div').hide();
     });
-
-    function getIndicatorList() {
-        $('[name="search"]').html('');
-        measure_level= $('select[name="measure_level"]').val();
-        // AJAX to get programs
-        $.ajax({
-            url: '<?php echo base_url(); ?>reporting/get_indicators_list',
-            type: 'POST',
-            dataType: 'JSON',
-            data: {
-                year: $('[name="year"]').val(),
-                measure_level_id:measure_level
-            },
-            error: function() {
-                $.toast({
-                    stack: false,
-                    icon: 'error',
-                    position: 'bottom-right',
-                    showHideTransition: 'slide',
-                    heading: 'Network Error!',
-                    text: 'Please check your internet connection.'
-                });
-            },
-            success: function(response) {
-                if (response.status == 0) {
-                    $.toast({
-                        stack: false,
-                        icon: 'error',
-                        position: 'bottom-right',
-                        showHideTransition: 'slide',
-                        heading: 'Error!',
-                        text: response.msg
-                    });
-                    return false;
-                }
-                var programs = '';
-                var counter = 0;
-                var selected = "" + response.selected;
-                var selArr = selected.split(',');
-                // programs += '<option value="" >Search Indicator ... </option>';
-                // response.pos.forEach(function(program, index) {
-                //     programs += '<option value="' + program.id + '" >' + program.title + '</option>';
-                // });
-                if (response.result.lkp_indicators_list.length > 0) {
-                    programs += '<option value="" >Search Indicator ... </option>';
-                    
-                    for (var field of response.result.lkp_indicators_list) {
-                        // CHILD_HTML += '<option value = "' + field.indicator_id + '">' + field.indicator_name + '</option>';
-                        programs += '<option value="' + field.indicator_id + '" >' + field.indicator_name + '</option>';
-                    };
-                    // $('.indicators').html(CHILD_HTML);
-                }
-                $('[name="indicator"]').html(programs);
-
-                // Refresh options
-                // $('[name="search"]').trigger('change');
-                $('[name="indicator"]').multipleSelect('refresh');
-            }
-        });
-    }
 
     $('body').on('change', '[name="indicator"]', function() {
         $elem = $(this);
@@ -554,7 +501,16 @@
                 measure_level: measure_level,
                 year_id: year_id,
                 country_id: country_id,
-                county_id: county_id
+                county_id: county_id,
+                csrf_test_name: csrfHash
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
             },
             error: function() {
                 // setTimeout(function() {
@@ -569,16 +525,19 @@
                             CHILD_HTML1 += '<option value = "' + field.dimensions_id + '" selected>' + field.dimensions_name + '</option>';
                         };
                         $('.dimension').html(CHILD_HTML1);
+
                         var CHILD_HTML2 = '';                        
                         for (var field of response.result.lkp_indicator_data_list) {
                             CHILD_HTML2 += '<option value = "' + field.sub_dimensions_id + '" selected>' + field.sub_dimensions_name + '</option>';
                         };
                         $('.subdimension').html(CHILD_HTML2);
+
                         var CHILD_HTML3 = '';                        
                         for (var field of response.result.lkp_indicator_data_list) {
                             CHILD_HTML3 += '<option value = "' + field.categories_id + '" selected>' + field.categories_name + '</option>';
                         };
                         $('.category').html(CHILD_HTML3);
+
                         var CHILD_HTML4 = '';  
                         var CHILD_HTML5 = '';  
                         var CHILD_HTML6 = '';  
@@ -688,9 +647,6 @@
                                     CHILD_HTML5 += '<input type="number" class="form-control" name="actual" value="'+actualValue+'">';
                                     break;
                             }
-                            // const dataTransfer = new DataTransfer();
-                            // dataTransfer.items.add(myFile);//your file(s) reference(s)
-                            // document.getElementById('data_sets').files = dataTransfer.files;
                             
                             CHILD_HTML6 += '<div class="file_link" id="file_link"><a class="form-control" href='+myFileURL+'>'+myFile+'</a></div>';
                             
@@ -735,7 +691,16 @@
                 measure_level: measure_level,
                 year_id: year_id,
                 country_id: country_id,
-                county_id: county_id
+                county_id: county_id,
+                csrf_test_name: csrfHash
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
             },
             error: function() {
                 // setTimeout(function() {
@@ -880,7 +845,73 @@
                 }
             }
         });
-    });    
+    });
+
+    function getIndicatorList() {
+        $('[name="search"]').html('');
+        measure_level= $('select[name="measure_level"]').val();
+        // AJAX to get programs
+        $.ajax({
+            url: '<?php echo base_url(); ?>reporting/get_indicators_list',
+            type: 'POST',
+            dataType: 'JSON',
+            data: {
+                year: $('[name="year"]').val(),
+                measure_level_id:measure_level,
+                csrf_test_name: csrfHash
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
+
+                if(initialcall == true){
+                    $('[name="country"]').trigger('change');
+                }
+            },
+            error: function() {
+                $.toast({
+                    stack: false,
+                    icon: 'error',
+                    position: 'bottom-right',
+                    showHideTransition: 'slide',
+                    heading: 'Network Error!',
+                    text: 'Please check your internet connection.'
+                });
+            },
+            success: function(response) {
+                if (response.status == 0) {
+                    $.toast({
+                        stack: false,
+                        icon: 'error',
+                        position: 'bottom-right',
+                        showHideTransition: 'slide',
+                        heading: 'Error!',
+                        text: response.msg
+                    });
+                    return false;
+                }
+                var programs = '';
+                var counter = 0;
+                var selected = "" + response.selected;
+                var selArr = selected.split(',');
+                if (response.result.lkp_indicators_list.length > 0) {
+                    programs += '<option value="" >Search Indicator ... </option>';
+                    
+                    for (var field of response.result.lkp_indicators_list) {
+                        // CHILD_HTML += '<option value = "' + field.indicator_id + '">' + field.indicator_name + '</option>';
+                        programs += '<option value="' + field.indicator_id + '" >' + field.indicator_name + '</option>';
+                    };
+                    // $('.indicators').html(CHILD_HTML);
+                }
+                $('[name="indicator"]').html(programs);
+                $('[name="indicator"]').multipleSelect('refresh');
+            }
+        });
+    }
 
     function getIndicatorData(){
         var indicator_id= "";
@@ -888,16 +919,12 @@
         document.getElementById("data_sets").value ="";
         $('input[name="actual"]').val('');
         if(  $("#dimension_div").is(":visible") == true ){
-            if ($('select[name="indicators1"]').val().length == 0) {
-                // 
-            }else{
-                indicator_id=$('select[name="indicators1"]').val();
+            if ($('select[name="indicators1"]').val().length != 0) {
+                indicator_id=$('select[name="indicators1"]').val(); 
             }
         }
-        if(  $("#indicator_div").is(":visible") == true ){
-            if ($('select[name="indicator"]').val().length == 0) {
-                // 
-            }else{
+        if($("#indicator_div").is(":visible") == true ){
+            if ($('select[name="indicator"]').val().length != 0) {
                 indicator_id=$('select[name="indicator"]').val();
             }
         }
@@ -914,7 +941,16 @@
                 measure_level: measure_level,
                 year_id: year_id,
                 country_id: country_id,
-                county_id: county_id
+                county_id: county_id,
+                csrf_test_name: csrfHash
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
             },
             error: function() {
                 // setTimeout(function() {
@@ -1052,10 +1088,6 @@
                         document.getElementById("data_source").value =response.result.data_source;
                         document.getElementById("remarks").value =response.result.remarks;
                     }
-                } else {
-                        // setTimeout(function() {
-                        //     $('.' + classname).empty();
-                        // }, 500);
                 }
             }
         });
@@ -1063,16 +1095,27 @@
 
     $('body').on('change', '.country', function() {
         $elem = $(this);
-        country_id= this.value;
-        role_id= <?php echo $lkp_user_list['role_id']; ?>;
-        getIndicatorData();
+        var country_id = this.value;
+        var role_id= <?php echo $lkp_user_list['role_id']; ?>;
+        initialcall = false;
         $.ajax({
             url: "<?php echo base_url(); ?>reporting/get_countys",
             type: "POST",
             dataType: "json",
             data: {
                 country_id: country_id,
-                role_id: role_id
+                role_id: role_id,
+                csrf_test_name: csrfHash
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
+
+                getIndicatorData();
             },
             error: function() {
                 // setTimeout(function() {
@@ -1089,10 +1132,6 @@
                         };
                         $('.county').html(CHILD_HTML);
                     }
-                } else {
-                        // setTimeout(function() {
-                        //     $('.' + classname).empty();
-                        // }, 500);
                 }
             }
         });
@@ -1209,6 +1248,14 @@
                 data: indicatorform,
                 processData: false,
                 contentType: false,
+                complete: function(data) {
+                    var csrfData = JSON.parse(data.responseText);
+                    csrfName = csrfData.csrfName;
+                    csrfHash = csrfData.csrfHash;
+                    if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                        $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                    }
+                },
                 error: function() {
                     $.toast({
                         heading: 'Warning!',
@@ -1260,7 +1307,16 @@
             dataType: "json",
             data: {
                 dimensions_id: dimensions_id,
-                measure_level: measure_level
+                measure_level: measure_level,
+                csrf_test_name: csrfHash
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
             },
             error: function() {
                 // setTimeout(function() {
@@ -1271,32 +1327,20 @@
                 if (response.status == 1) {
                     if (response.result.lkp_sub_dimensions_list.length > 0) {
                         var CHILD_HTML = '';
-                        var CHILD_HTML_EMPTY = '';
-                        var CHILD_HTML_EMPTY1 = '';
                         CHILD_HTML += '<option value = "">Select Sub-Dimension</option>';
-                        CHILD_HTML_EMPTY += '<option value = "">Select Category</option>';
-                        CHILD_HTML_EMPTY1 += '<option value = "">Select Indicator</option>';
                         for (var field of response.result.lkp_sub_dimensions_list) {
                             CHILD_HTML += '<option value = "' + field.sub_dimensions_id + '">' + field.sub_dimensions_name + '</option>';
                         };
                         $('.subdimension1').html(CHILD_HTML);
+
+                        var CHILD_HTML_EMPTY = '';
+                        CHILD_HTML_EMPTY += '<option value = "">Select Category</option>';
                         $('.category1').html(CHILD_HTML_EMPTY);
+
+                        var CHILD_HTML_EMPTY1 = '';
+                        CHILD_HTML_EMPTY1 += '<option value = "">Select Indicator</option>';
                         $('.indicators1').html(CHILD_HTML_EMPTY1);
-                    } else {
-                        // var CHILD_HTML = '';
-                        // var CHILD_HTML_EMPTY = '';
-                        // var CHILD_HTML_EMPTY1 = '';
-                        // CHILD_HTML += '<option value = "">Select Sub-Dimension</option>';
-                        // CHILD_HTML_EMPTY += '<option value = "">Select Category</option>';
-                        // CHILD_HTML_EMPTY1 += '<option value = "">Select Indicator</option>';
-                        // $('.subdimension1').html(CHILD_HTML);
-                        // $('.category1').html(CHILD_HTML_EMPTY);
-                        // $('.indicators1').html(CHILD_HTML_EMPTY1);
-                    }
-                } else {
-                        // setTimeout(function() {
-                        //     $('.' + classname).empty();
-                        // }, 500);
+                    } 
                 }
             }
         });
@@ -1311,7 +1355,16 @@
             dataType: "json",
             data: {
                 sub_dimensions_id: sub_dimensions_id,
-                measure_level: measure_level
+                measure_level: measure_level,
+                csrf_test_name: csrfHash
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
             },
             error: function() {
                 // setTimeout(function() {
@@ -1322,20 +1375,16 @@
                 if (response.status == 1) {
                     if (response.result.lkp_categories_list.length > 0) {
                         var CHILD_HTML = '';
-                        var CHILD_HTML_EMPTY = '';
-                        CHILD_HTML += '<option value = "">Select Category</option>';
-                        CHILD_HTML_EMPTY += '<option value = "">Select Indicator</option>';
-                        
+                        CHILD_HTML += '<option value = "">Select Category</option>';                        
                         for (var field of response.result.lkp_categories_list) {
                             CHILD_HTML += '<option value = "' + field.categories_id + '">' + field.categories_name + '</option>';
                         };
                         $('.category1').html(CHILD_HTML);
+
+                        var CHILD_HTML_EMPTY = '';
+                        CHILD_HTML_EMPTY += '<option value = "">Select Indicator</option>';
                         $('.indicators1').html(CHILD_HTML_EMPTY);
                     }
-                } else {
-                        // setTimeout(function() {
-                        //     $('.' + classname).empty();
-                        // }, 500);
                 }
             }
         });
@@ -1351,7 +1400,16 @@
             dataType: "json",
             data: {
                 category_id: category_id,
-                measure_level_id: measure_level
+                measure_level_id: measure_level,
+                csrf_test_name: csrfHash
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
             },
             error: function() {
                 // setTimeout(function() {
@@ -1373,10 +1431,6 @@
                         CHILD_HTML += '<option value="" >No Indicator</option>';
                         $('.indicators1').html(CHILD_HTML);
                     }
-                } else {
-                        // setTimeout(function() {
-                        //     $('.' + classname).empty();
-                        // }, 500);
                 }
             }
         });

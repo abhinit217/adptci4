@@ -751,6 +751,8 @@
         }
 
     </style>
+    <?php $uri = new \CodeIgniter\HTTP\URI(current_url()); 
+    $this->session = \Config\Services::session();?>
     <!-- <style>
             @media (max-width: 575.98px) {
                 .list-view .card {
@@ -825,7 +827,7 @@
                     <img class="logo2" src="<?php echo base_url(); ?>include/assets/images/mpro-images/icrisat-logo.png">
                 </a> -->
                 <?php 
-                    if ($this->session->userdata('role') ==  6 || $this->session->userdata('role') ==  5){
+                    if ($this->session->get('role') ==  6 || $this->session->get('role') ==  5){
                         $dashboard_url= base_url().'reporting/c_dashboard';
                     }else{
                         $dashboard_url= base_url().'reporting/common_dashboard';
@@ -854,24 +856,15 @@
                         <!-- <li class="nav-item">
                             <a class="nav-link" href="<?php echo base_url(); ?>reporting/common_dashboard"> Home</a>
                         </li> -->
-                        <li class="dropdown nav-item" data-menu="dropdown"><a class="dropdown-item dropdown-toggle nav-link <?php echo ($this->uri->segment(2)== "common_dashboard" || $this->uri->segment(2)== "c_dashboard") ? 'active' : ''; ?>" href="#" data-toggle="dropdown">Dashboard</a>
+                        <li class="dropdown nav-item" data-menu="dropdown"><a class="dropdown-item dropdown-toggle nav-link <?php echo ($uri->getSegment(2)== "common_dashboard" || $uri->getSegment(2)== "c_dashboard") ? 'active' : ''; ?>" href="#" data-toggle="dropdown">Dashboard</a>
                             <ul class="dropdown-menu">
                             <?php 
-                            $this->db->select('*');
-                            $this->db->where('status', 1);
-                            $this->db->where('user_id', $this->session->userdata('login_id'));
-                            $result['lkp_user_list'] = $this->db->get('tbl_users')->row_array();
-                            if(isset($result['lkp_user_list']['country_id'])){
-                                $country_id=$result['lkp_user_list']['country_id'];
-                            }else{
-                                $country_id=1;
-                            }
-                            if ($this->session->userdata('role') ==  6 || $this->session->userdata('role') ==  5){?>
+                            if ($this->session->get('role') ==  6 || $this->session->get('role') ==  5){?>
                                 <li class="nav-item">
                                     <a class="dropdown-item " href="<?php echo base_url(); ?>reporting/c_dashboard"> Dashboard</a>
                                 </li>
                                 <li data-menu=""><a class="dropdown-item" href="<?php echo base_url(); ?>reporting/comparisons/<?php echo $country_id;?>" >Comparisons</a></li>
-                            <?php }else if ($this->session->userdata('role') ==  1){
+                            <?php }else if ($this->session->get('role') ==  1){
                                 ?>
                                 <li class="nav-item">
                                 <a class="dropdown-item " href="<?php echo base_url(); ?>reporting/common_dashboard"> Dashboard</a>
@@ -887,14 +880,14 @@
                         <!-- <li class="nav-item">
                             <a class="nav-link" href="<?php echo base_url(); ?>reporting/upload_data"> Upload Data</a>
                         </li> -->
-                        <li class="dropdown nav-item" data-menu="dropdown"><a class="dropdown-item dropdown-toggle nav-link <?php echo ($this->uri->segment(1)== "upload_data") ? 'active' : ''; ?>" href="#" data-toggle="dropdown">Upload Data </a>
+                        <li class="dropdown nav-item" data-menu="dropdown"><a class="dropdown-item dropdown-toggle nav-link <?php echo ($uri->getSegment(1)== "upload_data") ? 'active' : ''; ?>" href="#" data-toggle="dropdown">Upload Data </a>
                             <ul class="dropdown-menu">
                                 <li data-menu=""><a class="dropdown-item" href="<?php echo base_url(); ?>reporting/upload_data">Upload Single</a></li>
                                 <!-- <li data-menu=""><a class="dropdown-item" href="<?php echo base_url(); ?>reporting/upload_data_bulk" >Upload Bulk</a></li> -->
                                 <li data-menu=""><a class="dropdown-item" href="<?php echo base_url(); ?>reporting/bulk_preview" >Upload Bulk</a></li>
                             </ul>
                         </li>
-                        <?php if ($this->session->userdata('role') !=  5){?>                            
+                        <?php if ($this->session->get('role') !=  5){?>                            
                         <li class="nav-item">
                             <a class="nav-link" href="<?php echo base_url(); ?>reporting/view_data">Validate Data</a>
                         </li>
@@ -904,14 +897,14 @@
                         <?php
                         }
                         ?>
-                        <?php if ($this->session->userdata('role') !=  6){?>                            
+                        <?php if ($this->session->get('role') !=  6){?>                            
                         <li class="nav-item">
                             <a class="nav-link" href="<?php echo base_url(); ?>reporting/view_data_user">Validate Data</a>
                         </li>
                         <?php
                         }
                         ?>
-                        <!-- <?php if ($this->session->userdata('role') ==  5 || $this->session->userdata('role') ==  6){?>
+                        <!-- <?php if ($this->session->get('role') ==  5 || $this->session->get('role') ==  6){?>
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo base_url(); ?>dashboard/approval">Approval</a>
                             </li>
@@ -919,7 +912,7 @@
                         <!-- <li class="nav-item">
                             <a class="nav-link" href="<?php echo base_url(); ?>dashboard/overview">Overview</a>
                         </li> -->
-                        <!-- <?php if ($this->session->userdata('role') ==  6){?>
+                        <!-- <?php if ($this->session->get('role') ==  6){?>
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo base_url(); ?>dashboard/viewdata">View Data</a>
                             </li>
@@ -942,15 +935,15 @@
                                 <li data-menu="">
                                     <a class="dropdown-item"  href="<?php echo base_url(); ?>dashboard/performance">PERFORMANCE</a>
                                 </li>
-                                <?php if ($this->session->userdata('role') ==  6){?>
+                                <?php if ($this->session->get('role') ==  6){?>
                                     <li data-menu="">
                                         <a class="dropdown-item" href="<?php echo base_url(); ?>dashboard/viewdata">VIEW DATA</a>
                                     </li>
                                 <?php }?>
                             </ul>
                         </li> -->
-                        <!-- <?php if ($this->session->userdata('role') ==  1 || $this->session->userdata('role') ==  6){?>
-                            <li class="dropdown nav-item" data-menu="dropdown"><a class="dropdown-item dropdown-toggle nav-link <?php echo ($this->uri->segment(1)== "user_management") ? 'active' : ''; ?>" href="#" data-toggle="dropdown">Config </a>
+                        <!-- <?php if ($this->session->get('role') ==  1 || $this->session->get('role') ==  6){?>
+                            <li class="dropdown nav-item" data-menu="dropdown"><a class="dropdown-item dropdown-toggle nav-link <?php echo ($uri->getSegment(1)== "user_management") ? 'active' : ''; ?>" href="#" data-toggle="dropdown">Config </a>
                                 <ul class="dropdown-menu">
                                     <li data-menu=""><a class="dropdown-item" href="<?php echo base_url(); ?>user_management/create_user">CREATE USER</a></li>
                                     <li data-menu=""><a class="dropdown-item" href="<?php echo base_url(); ?>user_management/user_list" >VIEW USER</a></li>
@@ -966,21 +959,21 @@
                     <ul class="navbar-nav ml-auto">
                         
                         <li class="nav-item">
-                            <?php if ($this->session->userdata('login_id') != '' || $this->session->userdata('login_id') != NULL) {
+                            <?php if ($this->session->get('login_id') != '' || $this->session->get('login_id') != NULL) {
                 ?>
                             <div class="dropdown profile-dropdown">
                                 <a href="#" class="nav-link nb pr-0 leading-none" data-toggle="dropdown">
                                     <!-- <span class="mr-2 text-secondary">Hello,</span> <span class="mr-2 text-primary"><strong> -->
                                     <span class="mr-2 text-secondary"></span> <span class="mr-2 text-primary"><strong>
-                                            <?php echo $this->session->userdata('name'); ?></strong></span>
+                                            <?php echo $this->session->get('name'); ?></strong></span>
                                     <span class="avatar avatar-online bg-white">
-                                        <img src="<?php echo base_url(); ?>upload/user/<?php echo $this->session->userdata('image');?>" alt="avatar" style="border-radius: 50px;"><i></i>
+                                        <img src="<?php echo base_url(); ?>upload/user/<?php echo $this->session->get('image');?>" alt="avatar" style="border-radius: 50px;"><i></i>
                                     </span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow animated  text-center">
                                     <div class="text-center">
                                         <a href="#" class="dropdown-item text-center user pb-0 font-weight-bold">
-                                            <?php echo $this->session->userdata('name'); ?></a>
+                                            <?php echo $this->session->get('name'); ?></a>
                                         <div class="dropdown-divider"></div>
                                     </div>
                                     <a class="dropdown-item d-flex  text-center" href="<?php echo base_url(); ?>login/profile">

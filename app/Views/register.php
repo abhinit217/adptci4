@@ -483,6 +483,7 @@
         });  
         
         $('.country').on('change', function() {
+            //var request = new XMLHttpRequest();
             $elem = $(this);
             country_id= this.value;
             $.ajax({

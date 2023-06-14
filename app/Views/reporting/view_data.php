@@ -54,9 +54,6 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <div class="">
                                             <h3 class="title mb-0">Validate Data</h3>
-                                            <!-- <?php
-                                                echo CI_VERSION;
-                                            ?> -->
                                         </div>
                                         <!-- <div class="">
                                             <a href="index.html" class="btn btn-light1 btn-sm"><img src="./assets/images/icon-left-arrow.svg"> Back</a>

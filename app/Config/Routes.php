@@ -31,6 +31,22 @@ $routes->set404Override();
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'Landing::index');
+$routes->add('contact', 'Contact::index');
+$routes->post('contact/create', 'Contact::create');
+$routes->add('auth', 'Auth::index');
+$routes->post('auth/login', 'Auth::login');
+$routes->add('login', 'Login::index');
+$routes->post('login/logout', 'Login::logout');
+
+//$routes->add('reporting', 'Reporting::index');
+$routes->post('reporting/get_user_data_popup_modal', 'Reporting::get_user_data_popup_modal');
+$routes->post('reporting/get_indicators_list', 'Reporting::get_indicators_list');
+$routes->post('reporting/get_indicators_details', 'Reporting::get_indicators_details');
+$routes->post('reporting/get_countys', 'Reporting::get_countys');
+$routes->post('reporting/upload_get_dimensions', 'Reporting::upload_get_dimensions');
+$routes->post('reporting/upload_get_subdimensions', 'Reporting::upload_get_subdimensions');
+
+
 //$routes->get('abhinit', 'Abhinit::index');
 
 /*

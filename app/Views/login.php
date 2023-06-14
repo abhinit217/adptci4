@@ -239,9 +239,8 @@
                                         <div class="tab-content mt-4" id="nav-tabContent">
                                             <div class="tab-pane fade show active" id="nav-profile" role="tabpanel"
                                                 aria-labelledby="nav-profile-tab">
-                                                <form action="#"
-                                                    class="form-horizontal form-simple" method="post"
-                                                    accept-charset="utf-8">
+                                                <form action="#" class="form-horizontal form-simple" method="post" accept-charset="utf-8">
+                                                    <?= csrf_field() ?>
                                                     <div class="form-group">
                                                         <label for="exampleInputEmail1">Email address / Username</label>
                                                         <input type="text" class="form-control" id="user-name"
@@ -460,12 +459,12 @@
                     data: fromData,
                     processData: false,
                     contentType: false,
-                    /*complete: function(data) {
+                    complete: function(data) {
                         var csrfData = JSON.parse(data.responseText);
                         if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
                             $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
                         }
-                    },*/
+                    },
                     error: function() {
                         form.find('.form.error').html('Could not establish connection to server. Please refresh the page and try again.');
                         $('button[type="submit"]').removeAttr('disabled').html('Sign In');
@@ -479,7 +478,7 @@
                         } else {
                             window.location.href = data.redirect;
                         }
-                    }*/
+                    }
                 });
             }
         }); 

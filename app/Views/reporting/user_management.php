@@ -17,7 +17,7 @@
     }
 </style>
 
-  
+  <h1>helo</h1>
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -53,11 +53,9 @@
                                         <div class="">
                                             <h3 class="title mb-0">User Management</h3>
                                         </div>
-                                        <!-- <div class="">
-                                            <a href="index.html" class="btn btn-light1 btn-sm"><img src="./assets/images/icon-left-arrow.svg"> Back</a>
-                                        </div> -->
+                                        <input type="hidden" class="txt_csrfname" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" />
                                         <div class="">
-                                        <a href="<?php echo base_url(); ?>user_management/create_user/" class="btn btn-sm btn-success" target="_blank">Register</span></a>
+                                            <a href="<?php echo base_url(); ?>user_management/create_user/" class="btn btn-sm btn-success" target="_blank">Register</span></a>
                                         </div>
                                     </div>
                                 </div>
@@ -170,13 +168,22 @@
     $('body').on('click', '#userdetails', function(){
         $elem = $(this);
         var recordid = $elem.data('recordid');
+        var csrfName = $('.txt_csrfname').attr('name'); // CSRF Token name
+        var csrfHash = $('.txt_csrfname').val(); // CSRF hash
         $.ajax({
             url: '<?php echo base_url(); ?>reporting/get_user_data_popup_modal',
             type: 'POST',
             dataType: 'json',
             data: { 
-                user_id: recordid
-             },
+                user_id: recordid,
+                csrf_test_name: csrfHash
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
+            },
             error: function() {
                 $.toast({
                     heading: 'Warning!',
