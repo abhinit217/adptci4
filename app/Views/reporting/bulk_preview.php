@@ -15,6 +15,7 @@
             </div>
             <div class="card-body p-3">
                 <form id="submit_form_data" >
+                    <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" />
                     <div class="row">
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <div class="row">
@@ -80,26 +81,21 @@
                                         $county_id = $lkp_user_list['country_id'];
                                         switch ($county_id) {
                                             case '1':
-                                        # code...
-                                            $county_name="County";
-                                            break;
+                                                $county_name="County";
+                                                break;
 
                                             case '2':
-                                        # code...
-                                            $county_name="District";
-                                            break;
+                                                $county_name="District";
+                                                break;
 
                                             case '3':
-                                        # code...
-                                            $county_name="Zone";
-                                            break;
+                                                $county_name="Zone";
+                                                break;
 
                                             default:
-                                        # code...
-                                            $county_name="County / Zone / District";
-                                            break;
-                                        }
-                                        ?>
+                                                $county_name="County / Zone / District";
+                                                break;
+                                        } ?>
                                         <div class="form-group form-upload sub_national" id="sub_national">
                                             <label for=""> Select <?php echo $county_name;?> </label>
                                             <select class="form-control county" name="county">
@@ -246,113 +242,99 @@
                                                                                                                                 <?php 
                                                                                                                                 switch ($indicator['lkp_value_type']) {
                                                                                                                                     case '1':
-                                                                                                                # code...
-                                                                                                                                    $sel_value0="";
-                                                                                                                                    $sel_value1="";
-                                                                                                                                    if($actual_value ==0){
-                                                                                                                                        $sel_value0="selected";
-                                                                                                                                    }
-                                                                                                                                    if($actual_value ==1){
-                                                                                                                                        $sel_value1="selected";
-                                                                                                                                    }
-                                                                                                                                    $field_value = '<select name="'.$indicator['indicator_id'].'_actual" class="form-control" value="'.$actual_value.'">
-                                                                                                                                    <option value="">select value</option>
-                                                                                                                                    <option value="0" '.$sel_value0.'>0</option>
-                                                                                                                                    <option value="1" '.$sel_value1.'>1</option>
-                                                                                                                                    </select>
-                                                                                                                                    ';
-                                                                                                                                    break;
+                                                                                                                                        $sel_value0="";
+                                                                                                                                        $sel_value1="";
+                                                                                                                                        if($actual_value ==0){
+                                                                                                                                            $sel_value0="selected";
+                                                                                                                                        }
+                                                                                                                                        if($actual_value ==1){
+                                                                                                                                            $sel_value1="selected";
+                                                                                                                                        }
+                                                                                                                                        $field_value = '<select name="'.$indicator['indicator_id'].'_actual" class="form-control" value="'.$actual_value.'">
+                                                                                                                                        <option value="">select value</option>
+                                                                                                                                        <option value="0" '.$sel_value0.'>0</option>
+                                                                                                                                        <option value="1" '.$sel_value1.'>1</option>
+                                                                                                                                        </select>
+                                                                                                                                        ';
+                                                                                                                                        break;
 
                                                                                                                                     case '2':
-                                                                                                                # code...
-                                                                                                                                    $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'" data-maxlength="100" data-minlength="1" data-subtype="desimal">';
-                                                                                                                                    break;
+                                                                                                                                        $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'" data-maxlength="100" data-minlength="1" data-subtype="desimal">';
+                                                                                                                                        break;
 
                                                                                                                                     case '3':
-                                                                                                                # code...
-                                                                                                                                    $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'" data-minlength="1" data-maxlength="365" data-subtype="number">';
-                                                                                                                                    break;
+                                                                                                                                        $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'" data-minlength="1" data-maxlength="365" data-subtype="number">';
+                                                                                                                                        break;
 
                                                                                                                                     case '4':
-                                                                                                                # code...
-                                                                                                                                    $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'" data-minlength="1" data-maxlength="70" data-subtype="desimal">';
-                                                                                                                                    break;
+                                                                                                                                        $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'" data-minlength="1" data-maxlength="70" data-subtype="desimal">';
+                                                                                                                                        break;
 
                                                                                                                                     case '5':
-                                                                                                                # code...
-                                                                                                                                    $sel_value0="";
-                                                                                                                                    $sel_value1="";
-                                                                                                                                    if($actual_value ==0){
-                                                                                                                                        $sel_value0="selected";
-                                                                                                                                    }
-                                                                                                                                    if($actual_value ==1){
-                                                                                                                                        $sel_value1="selected";
-                                                                                                                                    }
-                                                                                                                                    $field_value = '<select name="'.$indicator['indicator_id'].'_actual" class="form-control" value="'.$actual_value.'">
-                                                                                                                                    <option value="">select value</option>
-                                                                                                                                    <option value="1">1</option>
-                                                                                                                                    <option value="2">2</option>
-                                                                                                                                    <option value="3">3</option>
-                                                                                                                                    <option value="4">4</option>
-                                                                                                                                    <option value="5">5</option>
-                                                                                                                                    </select>
-                                                                                                                                    ';
-                                                                                                                                    break;
+                                                                                                                                        $sel_value0="";
+                                                                                                                                        $sel_value1="";
+                                                                                                                                        if($actual_value ==0){
+                                                                                                                                            $sel_value0="selected";
+                                                                                                                                        }
+                                                                                                                                        if($actual_value ==1){
+                                                                                                                                            $sel_value1="selected";
+                                                                                                                                        }
+                                                                                                                                        $field_value = '<select name="'.$indicator['indicator_id'].'_actual" class="form-control" value="'.$actual_value.'">
+                                                                                                                                        <option value="">select value</option>
+                                                                                                                                        <option value="1">1</option>
+                                                                                                                                        <option value="2">2</option>
+                                                                                                                                        <option value="3">3</option>
+                                                                                                                                        <option value="4">4</option>
+                                                                                                                                        <option value="5">5</option>
+                                                                                                                                        </select>
+                                                                                                                                        ';
+                                                                                                                                        break;
 
                                                                                                                                     case '6':
-                                                                                                                # code...
-                                                                                                                                    $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'" data-minlength="0" data-subtype="number">';
-                                                                                                                                    break;
+                                                                                                                                        $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'" data-minlength="0" data-subtype="number">';
+                                                                                                                                        break;
 
                                                                                                                                     case '7':
-                                                                                                                # code...
-                                                                                                                                    $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'" data-minlength="1" data-subtype="number">';
-                                                                                                                                    break;
+                                                                                                                                        $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'" data-minlength="1" data-subtype="number">';
+                                                                                                                                        break;
 
                                                                                                                                     case '8':
-                                                                                                                # code...
-                                                                                                                                    $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'" data-minlength="1000" data-subtype="number">';
-                                                                                                                                    break;
+                                                                                                                                        $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'" data-minlength="1000" data-subtype="number">';
+                                                                                                                                        break;
 
                                                                                                                                     case '9':
-                                                                                                                # code...
-                                                                                                                                    $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'" data-maxlength="3000" data-subtype="desimal">';
-                                                                                                                                    break;
+                                                                                                                                        $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'" data-maxlength="3000" data-subtype="desimal">';
+                                                                                                                                        break;
 
                                                                                                                                     case '10':
-                                                                                                                # code...
-                                                                                                                                    $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'"  data-subtype="number">';
-                                                                                                                                    break;
+                                                                                                                                        $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'"  data-subtype="number">';
+                                                                                                                                        break;
 
                                                                                                                                     case '11':
-                                                                                                                # code...
-                                                                                                                                    $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'"  data-subtype="number">';
-                                                                                                                                    break;
+                                                                                                                                        $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'"  data-subtype="number">';
+                                                                                                                                        break;
 
                                                                                                                                     case '12':
-                                                                                                                # code...
-                                                                                                                                    $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'"  data-subtype="desimal">';
-                                                                                                                                    break;
+                                                                                                                                        $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'"  data-subtype="desimal">';
+                                                                                                                                        break;
 
                                                                                                                                     case '13':
-                                                                                                                                    $sel_value0="";
-                                                                                                                                    $sel_value1="";
-                                                                                                                                    if($actual_value ==0 && $actual_value!=""){
-                                                                                                                                        $sel_value0="checked";
-                                                                                                                                    }
-                                                                                                                                    if($actual_value ==1){
-                                                                                                                                        $sel_value1="checked";
-                                                                                                                                    }
-                                                                                                                                    $field_value = '<br/><div class="row"><div class="col-sm-12 col-md-6 col-lg-6"><label class="" ><input type="radio" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="1" '.$sel_value1.' data-subtype="desimal">Yes</label></div>
-                                                                                                                                    <div class="col-sm-12 col-md-6 col-lg-6"><label class="" ><input type="radio" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="0" '.$sel_value0.' data-subtype="desimal">No</label></div></div>';
-                                                                                                                                    break;
+                                                                                                                                        $sel_value0="";
+                                                                                                                                        $sel_value1="";
+                                                                                                                                        if($actual_value ==0 && $actual_value!=""){
+                                                                                                                                            $sel_value0="checked";
+                                                                                                                                        }
+                                                                                                                                        if($actual_value ==1){
+                                                                                                                                            $sel_value1="checked";
+                                                                                                                                        }
+                                                                                                                                        $field_value = '<br/><div class="row"><div class="col-sm-12 col-md-6 col-lg-6"><label class="" ><input type="radio" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="1" '.$sel_value1.' data-subtype="desimal">Yes</label></div>
+                                                                                                                                        <div class="col-sm-12 col-md-6 col-lg-6"><label class="" ><input type="radio" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="0" '.$sel_value0.' data-subtype="desimal">No</label></div></div>';
+                                                                                                                                        break;
 
                                                                                                                                     default:
-                                                                                                                # code...
-                                                                                                                                    $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'">';
-                                                                                                                                    break;
-                                                                                                                                }
-                                                                                                                                ?>
+                                                                                                                                        $field_value = '<input type="number" class="form-control" name="'.$indicator['indicator_id'].'_actual" value="'.$actual_value.'">';
+                                                                                                                                        break;
+                                                                                                                                } ?>
                                                                                                                                 <span class="w-100">
                                                                                                                                     <?php echo $field_value ?>
                                                                                                                                 </span>
@@ -492,10 +474,6 @@
                             };
                             $('.county').html(CHILD_HTML);
                         }
-                    } else {
-                            // setTimeout(function() {
-                            //     $('.' + classname).empty();
-                            // }, 500);
                     }
                 }
             });
@@ -555,13 +533,14 @@
         }else{
             $('select[name="country"]').next('.error').html('');
         }
-        if ($('select[name="county"]').val().length == 0) {
-            $('select[name="county"]').next('.error').html('This field is required');
-            surveycount++;
-        }else{
-            $('select[name="county"]').next('.error').html('');
+        if($(".county")[0]){
+            if ($('select[name="county"]').val().length == 0) {
+                $('select[name="county"]').next('.error').html('This field is required');
+                surveycount++;
+            }else{
+                $('select[name="county"]').next('.error').html('');
+            }
         }
-        // var form_id = $elem.closest("form").attr('id');
         var form_id = "submit_form_data";
 
         $('input[type=number]', '#submit_form_data').each(function() {

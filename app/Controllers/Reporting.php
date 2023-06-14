@@ -234,14 +234,13 @@ class Reporting extends Controller {
 		}else{
 			$county_val = $this->request->getVar('county');
 		}
-		$this->db->select('rfr.*');
-		$this->db->join('form as f', 'rfr.indicator_id = f.id');
-		$this->db->where('rfr.relation_status', 1);
-		if($measure_level_id >0){
-			$this->db->where('rfr.lkp_level_measurement', $measure_level_id);
+
+		if($measure_level_id >0) {
+			$indicators_list = $this->db->query("select rfr.* from rpt_form_relation as rfr join form as f ON rfr.indicator_id = f.id where rfr.relation_status = 1 and rfr.lkp_level_measurement = '".$measure_level_id."' order by rfr.lkp_dimension_id,rfr.lkp_subdimension_id,rfr.lkp_category_id")->getResultArray();
+		} else {
+			$indicators_list = $this->db->query("select rfr.* from rpt_form_relation as rfr join form as f ON rfr.indicator_id = f.id where rfr.relation_status = 1 order by rfr.lkp_dimension_id,rfr.lkp_subdimension_id,rfr.lkp_category_id")->getResultArray();
 		}
-		$this->db->order_by('rfr.lkp_dimension_id,rfr.lkp_subdimension_id,rfr.lkp_category_id');
-		$indicators_list = $this->db->get('rpt_form_relation as rfr')->result_array();
+
 		foreach ($indicators_list as $key => $indicator) {
 			$count++;
 			$actual_val=0;
@@ -276,18 +275,14 @@ class Reporting extends Controller {
 				$insert_array['status']=2; // for tother users submited only
 			}
 			$record_status =0;
-			$this->db->select('*');
-			$this->db->where_in('form_id', $indicator_id);
-			$this->db->where_in('year_id', $year_val);
-			$this->db->where_in('country_id', $country_val);
-			$this->db->where_in('county_id', $county_val);
-			$this->db->where_in('status', [1,2,3,4]);
-			$ic_form_data_a_rset = $this->db->get('ic_form_data_a')->result_array();
+
+			$ic_form_data_a_rset = $this->db->query("select * from ic_form_data_a where form_id = '".$indicator_id."' and year_id = '".$year_val."' and country_id = '".$country_val."' and county_id = '".$county_val."' and  status IN (1,2,3,4) ")->getResultArray();
+
 			foreach ($ic_form_data_a_rset as $key => $rdata) {
 				//get existing record details
-				$record_status =$rdata['status'];
-				$insert_array['data_id']=$rdata['data_id'];
-				$record_id=$rdata['id'];
+				$record_status = $rdata['status'];
+				$insert_array['data_id'] = $rdata['data_id'];
+				$record_id = $rdata['id'];
 			}
 			if($actual_val!="" || $actual_val!=0){ //check wether in form this indicator value
 				if($record_status==2 || $record_status==3){
@@ -299,18 +294,17 @@ class Reporting extends Controller {
 					$surv_update_data['data_sets']=$data_sets;
 					$surv_update_data['remarks']=$remarks;
 					$surv_update_data['reg_date_time']=$datetime;
-					// $query = $this->db->where('data_id', $insert_array['data_id'])->update('ic_form_data_a', $surv_update_data);
-					$query = $this->db->where('id', $record_id)->update('ic_form_data_a', $surv_update_data);
-					// print_r($this->db->last_query());exit();
+
+					$builder = $this->db->table('ic_form_data_a');
+					$builder->where('id', $record_id);
+					$query = $builder->update($surv_update_data);
 				}
 				if($record_status==0){
 					//if record doesint exists insert new record
-					$query = $this->db->insert($tablename, $insert_array);
-					// print_r($this->db->last_query());exit();
+					$builder = $this->db->table($tablename);
+					$query = $builder->insert($insert_array);
 				}
 				if($query){
-					// Insert uploaded images / files in db		
-								// $indicator_id.'_d_sets';
 					$data_set_field_name=$indicator_id.'_d_sets';
 					if(isset($_FILES[$data_set_field_name])) {
 						// foreach ($_FILES[$data_set_field_name]['name'] as $key => $si) {
@@ -351,8 +345,10 @@ class Reporting extends Controller {
 												'ip_address' => $this->input->ip_address(),
 												'status' => 1
 											);
-											$this->db->where('data_id', $insert_array['data_id'])->update('ic_data_file', $surv_image_data);
-	
+
+											$builder = $this->db->table('ic_data_file');
+											$builder->where('data_id', $insert_array['data_id']);
+											$query = $builder->update($surv_image_data);	
 										 }else{
 											$surv_image_data = array(
 												'file_id' => time().$key.'-'.$this->session->get('login_id'),
@@ -365,7 +361,9 @@ class Reporting extends Controller {
 												'ip_address' => $this->input->ip_address(),
 												'status' => 1
 											);
-											$this->db->insert('ic_data_file', $surv_image_data);
+
+											$builder = $this->db->table('ic_data_file');
+											$builder->insert($surv_image_data);
 										}
 									}
 								}
@@ -397,7 +395,6 @@ class Reporting extends Controller {
 		}else {
 			return $this->response->setJSON(array('status' => 0, 'msg' => 'Sorry! Something went wrong, please try after some time'));
 		}
-		exit();
 	}
 
 

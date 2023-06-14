@@ -45,6 +45,7 @@ $routes->post('reporting/get_indicators_details', 'Reporting::get_indicators_det
 $routes->post('reporting/get_countys', 'Reporting::get_countys');
 $routes->post('reporting/upload_get_dimensions', 'Reporting::upload_get_dimensions');
 $routes->post('reporting/upload_get_subdimensions', 'Reporting::upload_get_subdimensions');
+$routes->post('reporting/insert_bulk_indicatordata', 'Reporting::insert_bulk_indicatordata');
 
 
 //$routes->get('abhinit', 'Abhinit::index');
