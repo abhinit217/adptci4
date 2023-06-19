@@ -1,61 +1,60 @@
 <?php
 
 namespace App\Controllers;
+use CodeIgniter\Controller;
 
 class User_management extends \CodeIgniter\Controller {
 	
 	function __construct(){
-		parent::__construct();
-		$this->load->helper('url');
-		$this->load->library('session');
-		$this->load->library('user_agent');
-		$this->load->library('Phpmailer_lib');
-		$this->baseurl = base_url();
+		$this->session = \Config\Services::session();
+		$this->db = \Config\Database::connect();
+		$this->uri = new \CodeIgniter\HTTP\URI(current_url());
 
-		$this->load->model('Usermanagement_model');
+		$result['lkp_user_list'] = $this->db->query("select * from tbl_users where status = 1 and user_id = '".$this->session->get('login_id')."'")->getRow();
+		if(isset($result['lkp_user_list'])){
+			$this->country_id = $result['lkp_user_list']->country_id;
+		}else{
+			$this->country_id = 1;
+		}
 	}
 
 	public function create_user(){
-		if($this->session->userdata('login_id') == '' || $this->session->userdata('login_id') == NULL){
+		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
 			redirect($this->baseurl);
 		}
 
-		$this->db->select('*');
-		if($this->session->userdata('role') == 2){
-			$this->db->where('role_id >=', $this->session->userdata('role'));
-		}
-		$this->db->where('status', 1);
-		$role_list = $this->db->get('tbl_role')->result_array();
+		$subquery="";
+        if($this->session->get('role') == 2){
+            $role_list = $this->db->query("select * from tbl_role where role_id ='".$this->session->get('role')."'and status = 1 ")->getRow();
+        }else{
+        	$role_list = $this->db->query("select * from tbl_role where status = 1 ")->getResultArray();
+        }        
 
 		$result = array('role_list' => $role_list);
-		$this->db->select('*');
-		$this->db->where('county_status', 1);
-		$result['lkp_county_list'] = $this->db->get('lkp_county')->result_array();
-		$this->db->select('*');
-		$this->db->where('status', 1);
-		$this->db->order_by('slno');
-		$result['lkp_country_list'] = $this->db->get('lkp_country')->result_array();
-		$this->db->select('*');
-		$this->db->where('status', 1);
-		$this->db->where('user_id', $this->session->userdata('login_id'));
-		$result['lkp_user_list'] = $this->db->get('tbl_users')->row_array();
-		// print_r($this->session->userdata('name'));exit;
 		
-		$this->load->view('common/header');
-		$this->load->view('user_management/create_user', $result);
-		$this->load->view('common/footer');
+		$result['lkp_county_list'] = $this->db->query("select * from lkp_county where  county_status = 1 ")->getResultArray();
+
+		$result['lkp_country_list'] = $this->db->query("select * from lkp_country where  status = 1 order by slno")->getResultArray();
+
+		$result['lkp_user_list'] = $this->db->query("select * from tbl_users where user_id = '".$this->session->get('login_id')."' and status = 1 ")->getRowArray();
+
+		$headerresult['country_id'] = $this->country_id;
+		
+		return view('common/header', $headerresult)
+			.view('user_management/create_user', $result)
+			.view('common/footer');
 	}
 
 	public function get_countys(){
-		
-		$result = array();
-		$country_id = $this->input->post('country_id');
-		$this->db->select('*');
+		/*$this->db->select('*');
 		$this->db->where('county_status', 1);
 		$this->db->where('country_id', $country_id);
 		$this->db->order_by('county_name');
-		$result['lkp_county_list'] = $this->db->get('lkp_county')->result_array();
-		// print_r($this->db->last_query());exit();
+		$result['lkp_county_list'] = $this->db->get('lkp_county')->result_array();*/
+
+		$model = new \App\Models\LkpCountyModel;
+		$result['lkp_county_list'] = $model->findAll();
+
 		echo json_encode(array(
 			'status' => 1,
 			'result' => $result
@@ -64,7 +63,7 @@ class User_management extends \CodeIgniter\Controller {
 	}
 
 	public function manage_user(){
-		if($this->session->userdata('login_id') == '' || $this->session->userdata('login_id') == NULL){
+		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
 			redirect($this->baseurl);
 		}
 
@@ -75,16 +74,16 @@ class User_management extends \CodeIgniter\Controller {
 		$result = array(
 			'year_list' => $year_list
 		);
-		$this->load->view('common/header');
-		$this->load->view('user_management/manage_user', $result);
-		$this->load->view('common/footer');
+		return view('common/header');
+		return view('user_management/manage_user', $result);
+		return view('common/footer');
 	}
 
 	public function insert_user(){
 		echo 'Hai';
 		die();
 
-		// if($this->session->userdata('login_id') == '' || $this->session->userdata('login_id') == NULL){
+		// if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
 		// 	echo json_encode(array(
 		// 		'msg' => 'Session expired please refresh the to login.',
 		// 		'status' => 0
@@ -157,7 +156,7 @@ class User_management extends \CodeIgniter\Controller {
 			if($user_type == 5){
 				$user_role="County Admin";
 				$user_details = array(
-					// 'created_by' => $this->session->userdata('name'),
+					// 'created_by' => $this->session->get('name'),
 					'name' =>$first_name.' '.$last_name,
 					'user_role' => $user_role,
 					'county_name' => $this->Usermanagement_model->get_county_name_byID($county_id),
@@ -165,7 +164,7 @@ class User_management extends \CodeIgniter\Controller {
 			}else if($user_type == 6){
 				$user_role="Country Admin";
 				$user_details = array(
-					// 'created_by' => $this->session->userdata('name'),
+					// 'created_by' => $this->session->get('name'),
 					'name' =>$first_name.' '.$last_name,
 					'user_role' => $user_role,
 				);
@@ -223,7 +222,7 @@ class User_management extends \CodeIgniter\Controller {
 	}
 
 	public function approve_user(){
-		if($this->session->userdata('login_id') == '' || $this->session->userdata('login_id') == NULL){
+		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
 			redirect($this->baseurl);
 		}
 		$result = array();
@@ -249,7 +248,7 @@ class User_management extends \CodeIgniter\Controller {
 	}
 
 	public function search_user_info(){
-		if($this->session->userdata('login_id') == '') {
+		if($this->session->get('login_id') == '') {
 			echo json_encode(array(
 				'status' => 0,
 				'msg' => 'Session Expired! Please login again to continue.'
@@ -274,7 +273,7 @@ class User_management extends \CodeIgniter\Controller {
 	}
 
 	public function get_program_list_byyear(){
-		if($this->session->userdata('login_id') == '') {
+		if($this->session->get('login_id') == '') {
 			echo json_encode(array(
 				'status' => 0,
 				'msg' => 'Session Expired! Please login again to continue.'
@@ -340,7 +339,7 @@ class User_management extends \CodeIgniter\Controller {
 	}
 
 	public function get_po_list_for_result_tracker(){
-		if($this->session->userdata('login_id') == '') {
+		if($this->session->get('login_id') == '') {
 			echo json_encode(array(
 				'status' => 0,
 				'msg' => 'Session Expired! Please login again to continue.'
@@ -399,7 +398,7 @@ class User_management extends \CodeIgniter\Controller {
 	}
 
 	public function get_po_list_byyear2(){
-		if($this->session->userdata('login_id') == '') {
+		if($this->session->get('login_id') == '') {
 			echo json_encode(array(
 				'status' => 0,
 				'msg' => 'Session Expired! Please login again to continue.'
@@ -439,7 +438,7 @@ class User_management extends \CodeIgniter\Controller {
 	}
 
 	public function user_list($value=''){
-		if($this->session->userdata('login_id') == '' || $this->session->userdata('login_id') == NULL){
+		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
 			redirect($this->baseurl);
 		}
 
@@ -451,13 +450,13 @@ class User_management extends \CodeIgniter\Controller {
 		
 		$result = array('user_list' => $user_list);
 
-		$this->load->view('common/header');
-		$this->load->view('user_management/user_list', $result);
-		$this->load->view('common/footer');
+		return view('common/header');
+		return view('user_management/user_list', $result);
+		return view('common/footer');
 	}
 
 	public function get_crop_bycountry(){
-		if($this->session->userdata('login_id') == '') {
+		if($this->session->get('login_id') == '') {
 			echo json_encode(array(
 				'status' => 0,
 				'msg' => 'Session Expired! Please login again to continue.'
@@ -485,7 +484,7 @@ class User_management extends \CodeIgniter\Controller {
 	}
 
 	public function map_user(){
-		if($this->session->userdata('login_id') == '') {
+		if($this->session->get('login_id') == '') {
 			echo json_encode(array(
 				'status' => 0,
 				'msg' => 'Session Expired! Please login again to continue.'
@@ -577,7 +576,7 @@ class User_management extends \CodeIgniter\Controller {
 					'lkp_cluster_id' => NULL,
 					'indicator_id' => NULL,
 					'sub_indicator_id' => NULL,
-					'added_by' => $this->session->userdata('login_id'),
+					'added_by' => $this->session->get('login_id'),
 					'added_datetime' => date('Y-m-d H:i:s'),
 					'ip_address' => $this->input->ip_address(),
 					'status' => 1
@@ -615,7 +614,7 @@ class User_management extends \CodeIgniter\Controller {
 					'lkp_cluster_id' => $output,
 					'indicator_id' => NULL,
 					'sub_indicator_id' => NULL,
-					'added_by' => $this->session->userdata('login_id'),
+					'added_by' => $this->session->get('login_id'),
 					'added_datetime' => date('Y-m-d H:i:s'),
 					'ip_address' => $this->input->ip_address(),
 					'status' => 1
@@ -653,7 +652,7 @@ class User_management extends \CodeIgniter\Controller {
 					'lkp_cluster_id' => $get_outputinfo['lkp_cluster_id'],
 					'indicator_id' => $indicator,
 					'sub_indicator_id' => NULL,
-					'added_by' => $this->session->userdata('login_id'),
+					'added_by' => $this->session->get('login_id'),
 					'added_datetime' => date('Y-m-d H:i:s'),
 					'ip_address' => $this->input->ip_address(),
 					'status' => 1
@@ -691,7 +690,7 @@ class User_management extends \CodeIgniter\Controller {
 					'lkp_cluster_id' => $get_outputinfo['lkp_cluster_id'],
 					'indicator_id' => $get_outputinfo['indicator_id'],
 					'sub_indicator_id' => $subindicator,
-					'added_by' => $this->session->userdata('login_id'),
+					'added_by' => $this->session->get('login_id'),
 					'added_datetime' => date('Y-m-d H:i:s'),
 					'ip_address' => $this->input->ip_address(),
 					'status' => 1
@@ -718,7 +717,7 @@ class User_management extends \CodeIgniter\Controller {
 	}
 
 	public function user_mapping_details(){
-		if($this->session->userdata('login_id') == '' || $this->session->userdata('login_id') == NULL){
+		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
 			redirect($this->baseurl);
 		}
 
@@ -766,13 +765,13 @@ class User_management extends \CodeIgniter\Controller {
 		// $result = array('user_countrycrop_mapdetails' => $user_countrycrop_mapdetails, 'po_list' => $po_list, 'user_pos' => $user_pos, 'user_outputs' => $user_outputs, 'user_indicators' => $user_indicators, 'user_subindicators' => $user_subindicators, 'user_details' => $user_details);
 		$result = array('po_list' => $po_list, 'user_pos' => $user_pos, 'user_outputs' => $user_outputs, 'user_indicators' => $user_indicators, 'user_subindicators' => $user_subindicators, 'user_details' => $user_details);
 		
-		$this->load->view('common/header');
-		$this->load->view('user_management/user_mapping_details', $result);
-		$this->load->view('common/footer');
+		return view('common/header');
+		return view('user_management/user_mapping_details', $result);
+		return view('common/footer');
 	}
 
 	public function reset_pass(){
-		if($this->session->userdata('login_id') == '') {
+		if($this->session->get('login_id') == '') {
 			echo json_encode(array(
 				'status' => 0,
 				'msg' => 'Session Expired! Please login again to continue.'
@@ -809,7 +808,7 @@ class User_management extends \CodeIgniter\Controller {
 	}
 
 	public function change_role(){
-		if($this->session->userdata('login_id') == '') {
+		if($this->session->get('login_id') == '') {
 			echo json_encode(array(
 				'status' => 0,
 				'msg' => 'Session Expired! Please login again to continue.'
@@ -841,7 +840,7 @@ class User_management extends \CodeIgniter\Controller {
 	}
 
 	public function reporting_user(){
-		if($this->session->userdata('login_id') == '' || $this->session->userdata('login_id') == NULL){
+		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
 			redirect($this->baseurl);
 		}
 
@@ -863,13 +862,13 @@ class User_management extends \CodeIgniter\Controller {
 
 		$result = array('user_list' => $user_list);
 		
-		$this->load->view('common/header');
-		$this->load->view('user_management/reporting_user', $result);
-		$this->load->view('common/footer');
+		return view('common/header');
+		return view('user_management/reporting_user', $result);
+		return view('common/footer');
 	}
 
 	public function update_permissions(){
-		if(($this->session->userdata('login_id') == '')) {
+		if(($this->session->get('login_id') == '')) {
 			echo json_encode(array(
 				'msg' => 'Your session has expired. Please login and try again',
 				'status' => 0
