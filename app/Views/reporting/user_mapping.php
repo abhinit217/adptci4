@@ -88,15 +88,15 @@
                                                         <span class="error" style="color:red"></span>
                                                     </div>
                                                 </div>
-                                                <?php if($tbl_users_list['role_id']==5){?>
-                                                <div class="col-sm-12 col-md-4 col-lg-4">
-                                                    <div class="form-group form-upload">
-                                                        <label for=""> Select Sub-national </label>
-                                                        <select class="form-control county" name="county">
-                                                            <option selected>Select Sub-national</option>
-                                                        </select>
+                                                <?php if($tbl_users_list['role_id'] == 5){?>
+                                                    <div class="col-sm-12 col-md-4 col-lg-4">
+                                                        <div class="form-group form-upload">
+                                                            <label for=""> Select Sub-national </label>
+                                                            <select class="form-control county" name="county">
+                                                                <option selected>Select Sub-national</option>
+                                                            </select>
+                                                        </div>
                                                     </div>
-                                                </div>
                                                 <?php }?>
                                                 <div class="col-sm-12 col-md-12 col-lg-12 text-right">
                                                     <button type="button" class="btn btn-sm btn-success pull-right submit_data">Submit data</button>
@@ -118,12 +118,11 @@
 <script src="<?php echo base_url(); ?>include/assets/plugins/sisyphus/sisyphus.min.js"></script>
 <script src="<?php echo base_url(); ?>include/assets/plugins/wysiwyag/jquery.richtext.js"></script>
 <script type="text/javascript">
+
+    var csrfName = '<?= csrf_token() ?>';
+    var csrfHash = '<?= csrf_hash() ?>';
     
     $(function() {
-        // Initialize Sisyphus
-        // $("#submit_data").sisyphus();
-        // $('.default_indicatorcomment').trigger('change');
-
         //Date picker
         $('.picker').datepicker({
             format: 'yyyy-mm-dd',
@@ -146,17 +145,17 @@
     });
 
     $('body').on('click', '.send_back', function(event) {
-            var elem = $(this),
-                modal = $('#sendBackModal'),
-                backTo = elem.data('by'),
-                recordId = elem.data('recordid');
+        var elem = $(this),
+        modal = $('#sendBackModal'),
+        backTo = elem.data('by'),
+        recordId = elem.data('recordid');
 
-            // Set values in modal
-            modal.modal('show');
-            modal.find('form')[0].reset();
-            modal.find('#backTo').html(backTo);
-            modal.find('form').data('id', recordId);
-        });
+        // Set values in modal
+        modal.modal('show');
+        modal.find('form')[0].reset();
+        modal.find('#backTo').html(backTo);
+        modal.find('form').data('id', recordId);
+    });
 
     $('body').on('change', '.country', function() {
         $elem = $(this);
@@ -168,7 +167,16 @@
             dataType: "json",
             data: {
                 country_id: country_id,
-                role_id: role_id
+                role_id: role_id,
+                csrf_test_name: csrfHash
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
             },
             error: function() {
                 // setTimeout(function() {
@@ -187,6 +195,7 @@
                                 }
                             CHILD_HTML += '<option value = "' + field.county_id + '" '+selc_value+'>' + field.county_name + '</option>';
                         };
+                        console.log(CHILD_HTML);
                         $('.county').html(CHILD_HTML);
                     }
                 } else {
@@ -230,6 +239,14 @@
                             $elem.prop('disabled', false);
                         }
                     });
+                },
+                complete: function(data) {
+                    var csrfData = JSON.parse(data.responseText);
+                    csrfName = csrfData.csrfName;
+                    csrfHash = csrfData.csrfHash;
+                    if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                        $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                    }
                 },
                 success: function(response) {
                     if (response.status == 0) {
