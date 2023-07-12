@@ -36,7 +36,9 @@ $routes->post('contact/create', 'Contact::create');
 $routes->add('auth', 'Auth::index');
 $routes->post('auth/login', 'Auth::login');
 $routes->add('login', 'Login::index');
-$routes->post('login/logout', 'Login::logout');
+$routes->add('login/logout', 'Login::logout');
+$routes->add('login/register', 'Login::register');
+$routes->add('login/profile', 'Login::profile');
 
 //$routes->add('reporting', 'Reporting::index');
 $routes->post('reporting/get_user_data_popup_modal', 'Reporting::get_user_data_popup_modal');
@@ -46,6 +48,23 @@ $routes->post('reporting/get_countys', 'Reporting::get_countys');
 $routes->post('reporting/upload_get_dimensions', 'Reporting::upload_get_dimensions');
 $routes->post('reporting/upload_get_subdimensions', 'Reporting::upload_get_subdimensions');
 $routes->post('reporting/insert_bulk_indicatordata', 'Reporting::insert_bulk_indicatordata');
+$routes->post('reporting/get_subdimensions', 'Reporting::get_subdimensions');
+$routes->post('reporting/send_back', 'Reporting::send_back');
+$routes->post('reporting/update_user_country', 'Reporting::update_user_country');
+$routes->post('reporting/verify_data', 'Reporting::verify_data');
+
+$routes->post('login/change_profile_img', 'Login::change_profile_img');
+$routes->post('login/change_password', 'Login::change_password');
+
+
+
+$routes->post('user_management/insert_user', 'User_management::insert_user');
+$routes->post('user_management/get_countys', 'User_management::get_countys');
+$routes->post('user_management/approve_user', 'User_management::approve_user');
+
+
+
+
 
 
 //$routes->get('abhinit', 'Abhinit::index');

@@ -27,7 +27,7 @@ class Reporting extends Controller {
 
 	public function index(){
 		if ($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL) {
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		
 
@@ -41,20 +41,25 @@ class Reporting extends Controller {
 
 		$result = array('year_list' => $year_list);
 
-		return view('common/header');
-		return view('dashboard/result_tracker_view', $result);
-		return view('common/footer');
+		$headerresult['country_id'] = $this->country_id;
+
+		return view('common/header', $headerresult)
+			.view('reporting/result_tracker_view', $result)
+			.view('common/footer');
 	}
 
 	public function block($type = null){
-		return view('common/header');
-		return view('common/block_reporting', array('type' => $type));
-		return view('common/footer');
+
+		$headerresult['country_id'] = $this->country_id;
+
+		return view('common/header', $headerresult)
+		.view('common/block_reporting', array('type' => $type))
+		.view('common/footer');
 	}
 
 	public function upload_data(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$result= array();
@@ -75,7 +80,7 @@ class Reporting extends Controller {
 
 	public function upload_data_bulk(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$result= array();
@@ -132,14 +137,16 @@ class Reporting extends Controller {
 		
 		//getting common lkp data from tables end upto here
 
-		return view('common/header');
-		return view('reporting/upload_data_bulk', $result);		
-		return view('common/footer');
+		$headerresult['country_id'] = $this->country_id;
+
+		return view('common/header', $headerresult)
+		.view('reporting/upload_data_bulk', $result)
+		.view('common/footer');
 	}
 
 	public function bulk_preview(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$result= array();
@@ -188,15 +195,15 @@ class Reporting extends Controller {
 
 		$form_id_array =array();
 		foreach ($result['lkp_indicators_list'] as $key => $value) {
-			array_push($form_id_array,$value['indicator_id']);
+			array_push($form_id_array, $value['indicator_id']);
 		}
-		$subquery="";
+
+		$form_id_array = implode(",", $form_id_array);
         if($measure_level_id !=1){
-            $subquery="ifd.county_id = '".$county."' and ";
+        	$ic_form_data_a = $this->db->query("select ifd.*, idf.file_name from ic_form_data_a as ifd join ic_data_file as idf on ifd.data_id = idf.data_id where ifd.form_id in ('".$form_id_array."') and ifd.year_id = '".$year."' and ifd.country_id = '".$country."' and ifd.status IN (1,2) and ifd.county_id = '".$county."' ")->getResultArray();
+        }else{
+        	$ic_form_data_a = $this->db->query("select ifd.*, idf.file_name from ic_form_data_a as ifd join ic_data_file as idf on ifd.data_id = idf.data_id where ifd.form_id in ('".$form_id_array."') and ifd.year_id = '".$year."' and ifd.country_id = '".$country."' and ifd.status IN (1,2) ")->getResultArray();
         }
-        /*$formDataInfo = $this->db->query("select ifd.*,idf.file_name from ic_form_data_a as ifd join ic_data_file as idf on ifd.data_id = idf.data_id  where '".$subquery."' ifd.form_id IN '".$form_id_array."' and ifd.year_id = '".$year."' and ifd.country_id = '".$country."' and ifd.status IN [1,2] and icd.form_id IN '".$form_id_array."' ");*/
-        $formDataInfo = $this->db->query("select ifd.*, idf.file_name from ic_form_data_a as ifd join ic_data_file as idf on ifd.data_id = idf.data_id  where ifd.status IN (1,2) ");
-        $ic_form_data_a = $formDataInfo->getResultArray();
 		
 		$form_id_data_array =array();
 		foreach ($ic_form_data_a as $key => $data) {
@@ -220,8 +227,9 @@ class Reporting extends Controller {
 
 	public function insert_bulk_indicatordata(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
+
 		$time = time();
 		$count=0;
 		$datetime = date('Y-m-d H:i:s');
@@ -229,13 +237,14 @@ class Reporting extends Controller {
 		$measure_level_id = $this->request->getVar('measure_level');
 		$year_val = $this->request->getVar('year');
 		$country_val = $this->request->getVar('country');
-		if($measure_level_id==1){
+
+		if($measure_level_id == 1){
 			$county_val = 0;
 		}else{
 			$county_val = $this->request->getVar('county');
 		}
 
-		if($measure_level_id >0) {
+		if($measure_level_id > 0) {
 			$indicators_list = $this->db->query("select rfr.* from rpt_form_relation as rfr join form as f ON rfr.indicator_id = f.id where rfr.relation_status = 1 and rfr.lkp_level_measurement = '".$measure_level_id."' order by rfr.lkp_dimension_id,rfr.lkp_subdimension_id,rfr.lkp_category_id")->getResultArray();
 		} else {
 			$indicators_list = $this->db->query("select rfr.* from rpt_form_relation as rfr join form as f ON rfr.indicator_id = f.id where rfr.relation_status = 1 order by rfr.lkp_dimension_id,rfr.lkp_subdimension_id,rfr.lkp_category_id")->getResultArray();
@@ -254,6 +263,7 @@ class Reporting extends Controller {
 			$remarks = $this->request->getVar($indicator['indicator_id'].'_remarks');
 			$insert_array =array();
 			$time=$time+10;
+
 			$insert_array['data_id'] = $time.'-'.$this->session->get('login_id');
 			$insert_array['form_id']=$indicator_id;
 			$insert_array['measurement_level']=$measure_level_id;
@@ -269,6 +279,7 @@ class Reporting extends Controller {
 			$insert_array['remarks']=$remarks;
 			$insert_array['reg_date_time']=$datetime;
 			$insert_array['user_id']=$this->session->get('login_id');
+
 			if($this->session->get('role')==1){
 				$insert_array['status']=3;  // For Admin submited record auto approval
 			}else{
@@ -284,7 +295,8 @@ class Reporting extends Controller {
 				$insert_array['data_id'] = $rdata['data_id'];
 				$record_id = $rdata['id'];
 			}
-			if($actual_val!="" || $actual_val!=0){ //check wether in form this indicator value
+
+			if($actual_val != "" || $actual_val != 0){ //check wether in form this indicator value
 				if($record_status==2 || $record_status==3){
 					//if already records exists updated record
 					$surv_update_data =array();
@@ -307,105 +319,96 @@ class Reporting extends Controller {
 				if($query){
 					$data_set_field_name=$indicator_id.'_d_sets';
 					if(isset($_FILES[$data_set_field_name])) {
-						// foreach ($_FILES[$data_set_field_name]['name'] as $key => $si) {
-							if($_FILES[$data_set_field_name]['size'] > 0) {
-								//Upload Image
-								$file_name = $_FILES[$data_set_field_name]['name'];
-								$ext = pathinfo($file_name, PATHINFO_EXTENSION);
-								// $file = $file_name;
-								$file = uniqid().$key.$this->session->get('login_id').'.'.$ext;
-								$path_parts = pathinfo($_FILES[$data_set_field_name]['name']);
-								$extension = $path_parts['extension'];
+						if($_FILES[$data_set_field_name]['size'] > 0) {
+							//Upload Image
+							$file_name = $_FILES[$data_set_field_name]['name'];
+							$ext = pathinfo($file_name, PATHINFO_EXTENSION);
+							// $file = $file_name;
+							$file = uniqid().$key.$this->session->get('login_id').'.'.$ext;
+							$path_parts = pathinfo($_FILES[$data_set_field_name]['name']);
+							$extension = $path_parts['extension'];
+							$file_type="image";
+							if($extension=='pdf'|| $extension=='docx'|| $extension=='doc'){
+								$file_type="document";
+							}else{
 								$file_type="image";
-								if($extension=='pdf'|| $extension=='docx'|| $extension=='doc'){
-									$file_type="document";
-								}else{
-									$file_type="image";
-								}
-								$file_size = $_FILES[$data_set_field_name]['size'];
-	
-								if(!defined('UPLOAD_DIR')) define('UPLOAD_DIR', 'upload/survey/');
-								$imgurl = UPLOAD_DIR . $file;
-	
-								$filename = $_FILES[$data_set_field_name]["tmp_name"];
-								$file_directory = "upload/survey/";
-								if($filename) {
-									if(move_uploaded_file($filename, $file_directory . $file)){
-										$this->db->select('data_id');
-										$this->db->where('data_id', $insert_array['data_id'])->where('status', 1);
-										$check_record = $this->db->get('ic_data_file')->row_array();
-										 if(isset($check_record['data_id'])){
-											$surv_image_data = array(
-												'file_id' => time().$key.'-'.$this->session->get('login_id'),
-												'form_id' => $indicator_id,
-												'user_id' => $this->session->get('login_id'),
-												'file_name' => $file,
-												'file_type' => $file_type,
-												'created_date' => $datetime,
-												'ip_address' => $this->input->ip_address(),
-												'status' => 1
-											);
+							}
+							$file_size = $_FILES[$data_set_field_name]['size'];
 
-											$builder = $this->db->table('ic_data_file');
-											$builder->where('data_id', $insert_array['data_id']);
-											$query = $builder->update($surv_image_data);	
-										 }else{
-											$surv_image_data = array(
-												'file_id' => time().$key.'-'.$this->session->get('login_id'),
-												'data_id' => $insert_array['data_id'],
-												'form_id' => $indicator_id,
-												'user_id' => $this->session->get('login_id'),
-												'file_name' => $file,
-												'file_type' => $file_type,
-												'created_date' => $datetime,
-												'ip_address' => $this->input->ip_address(),
-												'status' => 1
-											);
+							if(!defined('UPLOAD_DIR')) define('UPLOAD_DIR', 'upload/survey/');
+							$imgurl = UPLOAD_DIR . $file;
 
-											$builder = $this->db->table('ic_data_file');
-											$builder->insert($surv_image_data);
-										}
+							$filename = $_FILES[$data_set_field_name]["tmp_name"];
+							$file_directory = "upload/survey/";
+							if($filename) {
+								if(move_uploaded_file($filename, $file_directory . $file)){
+									$check_record = $this->db->query("select data_id from ic_data_file where data_id = '".$insert_array['data_id']."' and status = 1 ")->getRowArray();
+
+									if(isset($check_record['data_id'])){
+										$surv_image_data = array(
+											'file_id' => time().$key.'-'.$this->session->get('login_id'),
+											'form_id' => $indicator_id,
+											'user_id' => $this->session->get('login_id'),
+											'file_name' => $file,
+											'file_type' => $file_type,
+											'created_date' => $datetime,
+											'ip_address' => $this->request->getIPAddress(),
+											'status' => 1
+										);
+
+										$builder = $this->db->table('ic_data_file');
+										$builder->where('data_id', $insert_array['data_id']);
+										$query = $builder->update($surv_image_data);	
+									}else{
+										$surv_image_data = array(
+											'file_id' => time().$key.'-'.$this->session->get('login_id'),
+											'data_id' => $insert_array['data_id'],
+											'form_id' => $indicator_id,
+											'user_id' => $this->session->get('login_id'),
+											'file_name' => $file,
+											'file_type' => $file_type,
+											'created_date' => $datetime,
+											'ip_address' => $this->request->getIPAddress(),
+											'status' => 1
+										);
+
+										$builder = $this->db->table('ic_data_file');
+										$builder->insert($surv_image_data);
 									}
 								}
 							}
-						// }
+						}
 					}
-					$query_status=1;
 				}else{
-					$query_status=0;
+					return $this->response->setJSON(
+						array(
+							'status' => 0,
+							'msg' => 'Sorry! Something went wrong, please try after some time',
+							'csrfName' => $this->security->getCSRFTokenName(),
+							'csrfHash' => $this->security->getCSRFHash(),
+						)
+					);
 				}
 			}
-
+		}
 			
-		}
-		
-		if($query_status==1){
-			// $result['measure_level_id'] = $measure_level_id;
-			// $result['year'] = $year_val;
-			// $result['country'] = $country_val;
-			// $result['county'] = $county_val;
-			// return view('common/header');
-			// return view('reporting/bulk_preview', $result);		
-			// return view('common/footer');
-			// redirect('/reporting/bulk_preview/'.$measure_level_id.'/'.$year_val.'/'.$country_val.'/'.$county_val.'/5');
-			return $this->response->setJSON(array(
-				'status' => 1,
-				'msg' => 'Submitted successfully.'
-			));
-		}else {
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Sorry! Something went wrong, please try after some time'));
-		}
+		return $this->response->setJSON(array(
+			'status' => 1,
+			'msg' => 'Submitted successfully.',
+			'csrfName' => $this->security->getCSRFTokenName(),
+			'csrfHash' => $this->security->getCSRFHash(),
+		));
 	}
 
 
 	public function c_dashboard(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$result= array();
-		if(!empty($this->uri->getSegment('3')) && $this->session->get('role')==1){
-			$result['country_id'] = $this->uri->getSegment('3');
+		if(!empty($this->uri->getSegment('4')) && $this->session->get('role')==1){
+			$result['country_id'] = $this->uri->getSegment('4');
 		}else{
 			$result['lkp_user_list'] = $this->db->query("select * from tbl_users where status = 1 and user_id = '".$this->session->get('login_id')."'")->getRow();
 			if(isset($result['lkp_user_list'])){
@@ -423,12 +426,12 @@ class Reporting extends Controller {
 
 	public function comparisons(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$result= array();
-		if(!empty($this->uri->getSegment('3'))){
-			$result['country_id'] = $this->uri->getSegment('3');
+		if(!empty($this->uri->getSegment('4'))){
+			$result['country_id'] = $this->uri->getSegment('4');
 		}else{
 			$result['lkp_user_list'] = $this->db->query("select * from tbl_users where status = 1 and user_id = '".$this->session->get('login_id')."'")->getRow();
 			if(isset($result['lkp_user_list'])){
@@ -446,7 +449,7 @@ class Reporting extends Controller {
 
 	public function edit_data(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$record_id = $this->uri->getSegment('3');
 		// $indicator_id = $this->uri->getSegment('4');
@@ -477,14 +480,16 @@ class Reporting extends Controller {
 
 		//getting common lkp data from tables end upto here
 
-		return view('common/header');
-		return view('reporting/edit_data', $result);		
-		return view('common/footer');
+		$headerresult['country_id'] = $this->country_id;
+
+		return view('common/header', $headerresult)
+		.view('reporting/edit_data', $result)		
+		.view('common/footer');
 	}
 
 	public function view_data(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$result= array();
@@ -509,7 +514,7 @@ class Reporting extends Controller {
 	}
 	public function view_data_user(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$result= array();
@@ -538,7 +543,7 @@ class Reporting extends Controller {
 
 	public function get_dimensions_user(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$measure_level = $this->request->getVar('measure_level');
@@ -558,14 +563,16 @@ class Reporting extends Controller {
 		// $result['lkp_dimensions_list'] = $this->db->get('lkp_dimensions')->result_array();
 		return $this->response->setJSON(array(
 			'status' => 1,
-			'result' => $result
+			'result' => $result,
+			'csrfName' => $this->security->getCSRFTokenName(),
+			'csrfHash' => $this->security->getCSRFHash(),
 		));
 		exit();
 	}
 
 	public function get_subdimensions_user(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$dimensions_id = $this->request->getVar('dimensions_id');
@@ -600,7 +607,7 @@ class Reporting extends Controller {
 
 	public function get_category_user(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$sub_dimensions_id = $this->request->getVar('sub_dimensions_id');
@@ -620,45 +627,34 @@ class Reporting extends Controller {
 
 		return $this->response->setJSON(array(
 			'status' => 1,
-			'result' => $result
+			'result' => $result,
+			'csrfName' => $this->security->getCSRFTokenName(),
+			'csrfHash' => $this->security->getCSRFHash(),
 		));
 		exit();
 	}
 
 	public function get_indicator_data_user(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$indicator_id = $this->request->getVar('indicator_id');
 		$user_country = $this->request->getVar('user_country');
 		$user_id = $this->session->get('login_id');
 
-		$this->db->select('*');
-		$this->db->where('status', 1);
-		$this->db->where('user_id', $user_id);
-		$result['lkp_users_list'] = $this->db->get('tbl_users')->result_array();
+		$result['lkp_users_list'] = $this->db->query("select * from tbl_users where status = 1 and user_id = '".$user_id."'")->getResultArray();
 
-		$this->db->select('icd.*,y.year,ctr.country_name,cty.county_name');
-		$this->db->join('lkp_year as y', 'icd.year_id = y.year_id');
-		$this->db->join('lkp_country as ctr', 'icd.country_id = ctr.country_id');
-		$this->db->join('lkp_county as cty', 'icd.county_id = cty.county_id');
-		$this->db->join('rpt_form_relation as rpt', 'rpt.indicator_id = icd.form_id');
 		if($this->session->get('role')==6){
-			$this->db->where('icd.country_id', $user_country);
+			$result['lkp_indicator_data_list'] = $this->db->query("select icd.*,y.year,ctr.country_name,cty.county_name from ic_form_data_a as icd join lkp_year as y on icd.year_id = y.year_id join lkp_country as ctr on icd.country_id = ctr.country_id join lkp_county as cty on icd.county_id = cty.county_id join rpt_form_relation as rpt on rpt.indicator_id = icd.form_id where icd.status in (2,3,4) and icd.country_id = '".$result['lkp_users_list'][0]['country_id']."' and icd.form_id = '".$indicator_id."' and icd.county_id = '".$result['lkp_users_list'][0]['county_id']."' and icd.country_id = '".$user_country."' ")->getResultArray();
+		}else{
+			$result['lkp_indicator_data_list'] = $this->db->query("select icd.*,y.year,ctr.country_name,cty.county_name from ic_form_data_a as icd join lkp_year as y on icd.year_id = y.year_id join lkp_country as ctr on icd.country_id = ctr.country_id join lkp_county as cty on icd.county_id = cty.county_id join rpt_form_relation as rpt on rpt.indicator_id = icd.form_id where icd.status in (2,3,4) and icd.country_id = '".$result['lkp_users_list'][0]['country_id']."' and icd.form_id = '".$indicator_id."' and icd.county_id = '".$result['lkp_users_list'][0]['county_id']."' ")->getResultArray();
 		}
-		$this->db->where_in('icd.status', [2,3,4]);
-		$this->db->where('icd.form_id', $indicator_id);
-		$this->db->where('icd.country_id', $result['lkp_users_list'][0]['country_id']);
-		$this->db->where('icd.county_id', $result['lkp_users_list'][0]['county_id']);
-		$result['lkp_indicator_data_list'] = $this->db->get('ic_form_data_a as icd')->result_array();
 
 		if($result['lkp_indicator_data_list']){
 			foreach ($result['lkp_indicator_data_list'] as $key => $value) {
-				$this->db->select('*');
-				$this->db->where('status', 1);
-				$this->db->where('data_id', $value['data_id']);
-				$result['lkp_query_list'] = $this->db->get('ic_data_query')->result_array();
+
+				$result['lkp_query_list'] = $this->db->query("select * from ic_data_query where status = 1 and data_id = '".$value['data_id']."' ")->getResultArray();
 				$query_status=0;
 				if($result['lkp_query_list']){
 					$query_status=1;
@@ -672,78 +668,53 @@ class Reporting extends Controller {
 
 		return $this->response->setJSON(array(
 			'status' => 1,
-			'result' => $result
+			'result' => $result,
+			'csrfName' => $this->security->getCSRFTokenName(),
+			'csrfHash' => $this->security->getCSRFHash(),
 		));
 		exit();
 	}
 
 	public function verify_data(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
-		$record_id = $this->uri->getSegment('3');
+		$record_id = $this->uri->getSegment('4');
 		$result= array();
-		$this->db->select('*');
-		$this->db->where('id', $record_id);
-		$this->db->where_in('status', [2,3,0]);
-		$result['data_list'] = $this->db->get('ic_form_data_a')->result_array();
-		$data_id=$result['data_list'][0]['data_id'];
+
+		$result['data_list'] = $this->db->query("select * from ic_form_data_a where id = '".$record_id."' and status in (2,3,0)")->getResultArray();
 
 		//getting common lkp data from tables start from here
 		if($result['data_list']){
 
-			$this->db->select('year');
-			$this->db->where('year_id', $result['data_list'][0]['year_id']);
-			$this->db->where('year_status', 1);
-			$lkp_year_list = $this->db->get('lkp_year')->result_array();
+			$data_id=$result['data_list'][0]['data_id'];
+			$result['data_id'] = $data_id;
+
+			$lkp_year_list = $this->db->query("select year from lkp_year where year_id = '".$result['data_list'][0]['year_id']."' and year_status = 1 ")->getResultArray();
 			$lkp_year_name =$lkp_year_list[0]['year'];
-			
-			$this->db->select('dimensions_name');
-			$this->db->where('dimensions_id', $result['data_list'][0]['dimension_id']);
-			$this->db->where('dimensions_status', 1);
-			$lkp_dimensions_list = $this->db->get('lkp_dimensions')->result_array();
+
+
+			$lkp_dimensions_list = $this->db->query("select dimensions_name from lkp_dimensions where dimensions_id = '".$result['data_list'][0]['dimension_id']."' and dimensions_status = 1 ")->getResultArray();
 			$lkp_dimensions_name =$lkp_dimensions_list[0]['dimensions_name'];
 
-			$this->db->select('sub_dimensions_name');
-			$this->db->where('sub_dimensions_id', $result['data_list'][0]['sub_dimension_id']);
-			$this->db->where('sub_dimensions_status', 1);
-			$lkp_sub_dimensions_list = $this->db->get('lkp_sub_dimensions')->result_array();
+			$lkp_sub_dimensions_list = $this->db->query("select sub_dimensions_name from lkp_sub_dimensions where sub_dimensions_id = '".$result['data_list'][0]['sub_dimension_id']."' and sub_dimensions_status = 1 ")->getResultArray();
 			$lkp_sub_dimensions_name =$lkp_sub_dimensions_list[0]['sub_dimensions_name'];
 
-			$this->db->select('categories_name');
-			$this->db->where('categories_id', $result['data_list'][0]['category_id']);
-			$this->db->where('categories_status', 1);
-			$lkp_categories_list = $this->db->get('lkp_categories')->result_array();
+			$lkp_categories_list = $this->db->query("select categories_name from lkp_categories where categories_id = '".$result['data_list'][0]['category_id']."' and categories_status = 1 ")->getResultArray();
 			$lkp_categories_name =$lkp_categories_list[0]['categories_name'];
 
-			$this->db->select('title');
-			$this->db->where('id', $result['data_list'][0]['form_id']);
-			$this->db->where('status', 1);
-			$lkp_indicator_list = $this->db->get('form')->result_array();
+			$lkp_indicator_list = $this->db->query("select title from form where id = '".$result['data_list'][0]['form_id']."' and status = 1 ")->getResultArray();
 			$lkp_indicator_name =$lkp_indicator_list[0]['title'];
 
-			$this->db->select('country_name');
-			$this->db->where('country_id', $result['data_list'][0]['country_id']);
-			$this->db->where('status', 1);
-			$lkp_country_list = $this->db->get('lkp_country')->result_array();
+			$lkp_country_list = $this->db->query("select country_name from lkp_country where country_id = '".$result['data_list'][0]['country_id']."' and status = 1 ")->getResultArray();
 			$lkp_country_name =$lkp_country_list[0]['country_name'];
 
-			$this->db->select('county_name');
-			$this->db->where('county_id', $result['data_list'][0]['county_id']);
-			$this->db->where('county_status', 1);
-			$lkp_county_list = $this->db->get('lkp_county')->result_array();
+			$lkp_county_list = $this->db->query("select county_name from lkp_county where county_id = '".$result['data_list'][0]['county_id']."' and county_status = 1 ")->getResultArray();
 			$lkp_county_name =$lkp_county_list[0]['county_name'];
 
 			$lkp_acutal_value =$result['data_list'][0]['actual_value'];
 
-			$this->db->select('tu.first_name, tu.last_name, idq.*');
-			$this->db->join('tbl_users AS tu', 'tu.user_id = idq.sent_by');
-			$this->db->where('idq.status', 1)->where('idq.data_id', $data_id);
-			$queries = $this->db->get('ic_data_query AS idq')->result_array();
-			
-			
-
-			// print_r($this->db->last_query());exit();
+			$queries = $this->db->query("select tu.first_name, tu.last_name, idq.* from ic_data_query AS idq join tbl_users AS tu on tu.user_id = idq.sent_by where idq.status = 1 and idq.data_id = '".$data_id."' ")->getResultArray();
 		}else{
 			$lkp_year_name ="N/A";
 			$lkp_dimensions_name ="N/A";
@@ -754,6 +725,8 @@ class Reporting extends Controller {
 			$lkp_county_name ="N/A";
 			$lkp_acutal_value ="";
 			$queries ="";
+
+			$result['data_id'] = '';
 		}
 		
 		$result['lkp_year_name'] = $lkp_year_name;
@@ -766,36 +739,37 @@ class Reporting extends Controller {
 		$result['lkp_acutal_value'] = $lkp_acutal_value;
 		$result['queries'] = $queries;
 		$result['record_id'] = $record_id;
-		$result['data_id'] = $data_id;
-		$user = $this->db->where('user_id', $this->session->get('login_id'))->get('tbl_users')->row_array();
+
+
+		$user = $this->db->query("select * from tbl_users where user_id = '".$this->session->get('login_id')."'")->getRowArray();
+		
 		$result['first_name'] = $user['first_name'];
 		$result['last_name'] = $user['last_name'];
 		$result['role_id'] = $user['role_id'];
+
+		$result['lkp_user_list'] = $this->db->query("select * from tbl_users where status = 1 and user_id = '".$this->session->get('login_id')."'")->getRowArray();
 		
-		$this->db->select('*');
-		$this->db->where('status', 1);
-		$this->db->where('user_id', $this->session->get('login_id'));
-		$result['lkp_user_list'] = $this->db->get('tbl_users')->row_array();
 		if(isset($result['lkp_user_list']['country_id'])){
 			$country_id=$result['lkp_user_list']['country_id'];
 		}else{
 			$country_id=1;
 		}
 		$result['country_id'] = $country_id;
-		
-		// print_r($this->db->last_query());exit();
-		//getting common lkp data from tables end upto here
 
-		return view('common/header');
-		return view('reporting/verify_data', $result);		
-		return view('common/footer');
+		$headerresult['country_id'] = $this->country_id;
+
+		return view('common/header', $headerresult)
+		.view('reporting/verify_data', $result)
+		.view('common/footer');
 	}
 
 	public function send_back(){
 		if ($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL) {
 			return $this->response->setJSON(array(
 				'status' => 0,
-				'msg' => 'Your session has ended. Please refrersh the page and try again.'
+				'msg' => 'Your session has ended. Please refrersh the page and try again.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 			exit();
 		}
@@ -805,7 +779,9 @@ class Reporting extends Controller {
 		if (!$id || strlen($id) == 0) {
 			return $this->response->setJSON(array(
 				'status' => 0,
-				'msg' => 'Some problem occured. Please refresh the page and try again.'
+				'msg' => 'Some problem occured. Please refresh the page and try again.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 			exit();
 		}
@@ -826,86 +802,50 @@ class Reporting extends Controller {
 		date_default_timezone_set("UTC");
 
 		// Get record details
-		$details = $this->db->where('data_id', $id)->get('ic_form_data_a')->row_array();
+		$details = $this->db->query("select * from ic_form_data_a where data_id = '".$id."' ")->getRowArray();
 
-		// Insert query
-		// $this->db->insert('ic_data_query', array(
-		// 	'data_id' => $id,
-		// 	'query' => $query,
-		// 	'sent_by' => $this->session->get('login_id'),
-		// 	'sent_to' => $details['user_id'],
-		// 	'query_datetime' => date('Y-m-d H:i:s'),
-		// 	'ip_address' => $this->input->ip_address(),
-		// 	'status' => 1
-		// ));
 		$insertQuery =  array(
 			'data_id' => $id,
 			'query' => $query,
 			'sent_by' => $this->session->get('login_id'),
 			'sent_to' => $details['user_id'],
 			'query_datetime' => date('Y-m-d H:i:s'),
-			'ip_address' => $this->input->ip_address(),
+			'ip_address' => $this->request->getIPAddress(),
 			'status' => 1
 		);
-		$this->db->insert('ic_data_query', $insertQuery);
+		$builder = $this->db->table('ic_data_query');
+		$query = $builder->insert($insertQuery);
 
 		$query_array = array(
 			'query_status' => 1
 		);
-		$this->db->where('data_id', $id);
-		$this->db->update('ic_form_data_a', $query_array);
 
-		// $get_userid = $this->db->select('user_id, form_id, reg_date_time')->where('data_id', $id)->get('ic_form_data')->row_array();
-		// $user_info = $this->db->select('email_id, first_name, last_name')->where('status', 1)->where('user_id', $get_userid['user_id'])->get('tbl_users')->row_array();
-		// $form_details = $this->db->where('id', $get_userid['form_id'])->get('form')->row_array();
-		// $emaildetails = $this->db->where('status', 1)->get('emailconfiguration_details')->row_array();
-		// if (ENVIRONMENT != 'development') {
-		// 	$config = array(
-		// 		'protocol' => 'smtp',
-		// 		'smtp_host' => 'ssl://smtp.googlemail.com',
-		// 		'smtp_port' => 465,
-		// 		'smtp_user' => $emaildetails['email_id'], // change it to yours
-		// 		'smtp_pass' => $emaildetails['password'], // change it to yours
-		// 		'mailtype' => 'html',
-		// 		'charset' => 'iso-8859-1',
-		// 		'wordwrap' => TRUE
-		// 	);
-
-		// 	$subject = "Query received from" . $this->session->get('name');
-
-		// 	$this->load->library('email', $config);
-		// 	$this->email->set_newline("\r\n");
-		// 	$this->email->from('mandeaticrisat@gmail.com', 'MPRO');
-		// 	$this->email->to($user_info['email_id']);
-		// 	$this->email->subject($subject);
-		// 	$this->email->set_mailtype("html");
-		// 	$this->email->message("Dear " . $user_info['first_name'] . " " . $user_info['last_name'] . " ,<br/><br/><b>" . $this->session->get('name') . "</b> has sent you a query regarding the data submitted by you for <b>" . $form_details['title'] . "</b> on " . $get_userid['reg_date_time'] . ".<br/><br/>Please visit the MPRO AVISA Reporting 2020 platform to view the query.<br/><br/>You can either respond to the query by providing an explanation or you can edit your data if required and submit again.<br/><br/>Regards,<br/>MPRO team");
-		// 	if (!$this->email->send()) {
-		// 		show_error($this->email->print_debugger());
-		// 	}
-		// }
+		$builder = $this->db->table('ic_form_data_a');
+		$builder->where('data_id', $id);
+		$query = $builder->update($query_array);
 
 		// Get user details
-		$user = $this->db->where('user_id', $this->session->get('login_id'))->get('tbl_users')->row_array();
+		$user = $this->db->query("select * from tbl_users where user_id = '".$this->session->get('login_id')."' ")->getRowArray();
 		$insertQuery['first_name'] = $user['first_name'];
 		$insertQuery['last_name'] = $user['last_name'];
 
 		return $this->response->setJSON(array(
 			'status' => 1,
 			'query' => $insertQuery,
-			'msg' => 'Responded successfully.'
+			'msg' => 'Responded successfully.',
+			'csrfName' => $this->security->getCSRFTokenName(),
+			'csrfHash' => $this->security->getCSRFHash(),
 		));
-		// return $this->response->setJSON(array(
-		// 	'status' => 1,
-		// 	'msg' => 'Data sent back to user with you query.'
-		// ));
+		
 		exit();
 	}
 	public function respond_query()	{
 		if ($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL) {
 			return $this->response->setJSON(array(
 				'status' => 0,
-				'msg' => 'Your session has ended. Please refrersh the page and try again.'
+				'msg' => 'Your session has ended. Please refrersh the page and try again.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 			exit();
 		}
@@ -915,7 +855,9 @@ class Reporting extends Controller {
 		if (!$id || strlen($id) == 0) {
 			return $this->response->setJSON(array(
 				'status' => 0,
-				'msg' => '1Some problem occured. Please refresh the page and try again.'
+				'msg' => '1Some problem occured. Please refresh the page and try again.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 			exit();
 		}
@@ -925,7 +867,9 @@ class Reporting extends Controller {
 		if ($details->num_rows() == 0) {
 			return $this->response->setJSON(array(
 				'status' => 0,
-				'msg' => '2Some problem occured. Please refresh the page and try again.'
+				'msg' => '2Some problem occured. Please refresh the page and try again.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 			exit();
 		}
@@ -954,7 +898,7 @@ class Reporting extends Controller {
 			'sent_by' => $this->session->get('login_id'),
 			'sent_to' => $details['user_id'],
 			'query_datetime' => date('Y-m-d H:i:s'),
-			'ip_address' => $this->input->ip_address(),
+			'ip_address' => $this->request->getIPAddress(),
 			'status' => 1
 		);
 		$this->db->insert('ic_data_query', $insertQuery);
@@ -979,14 +923,16 @@ class Reporting extends Controller {
 		return $this->response->setJSON(array(
 			'status' => 1,
 			'query' => $insertQuery,
-			'msg' => 'Responded successfully.'
+			'msg' => 'Responded successfully.',
+			'csrfName' => $this->security->getCSRFTokenName(),
+			'csrfHash' => $this->security->getCSRFHash(),
 		));
 		exit();
 	}
 
 	public function approve_data(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$time = time();
@@ -994,17 +940,27 @@ class Reporting extends Controller {
 		$record_id = $this->request->getVar('record_id');
 		$insert_array =array();
 		$insert_array['status']=3;
-		// print_r($user_id);exit();
+		
+		$builder = $this->db->table($tablename);
+		$builder->where('id', $record_id);
+		$query = $builder->update($insert_array);
 
-		$query = $this->db->where('id', $record_id)->update($tablename, $insert_array);
-		// print_r($this->db->last_query());exit();
 		if($query){
 			return $this->response->setJSON(array(
 				'status' => 1,
-				'msg' => 'Record Approved successfully.'
+				'msg' => 'Record Approved successfully.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 		}else {
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Sorry! Something went wrong, please try after some time'));
+			return $this->response->setJSON(
+				array(
+					'status' => 0,
+					'msg' => 'Sorry! Something went wrong, please try after some time',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 		}
 		
 		exit();
@@ -1012,7 +968,7 @@ class Reporting extends Controller {
 
 	public function reject_data(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$time = time();
@@ -1020,25 +976,34 @@ class Reporting extends Controller {
 		$record_id = $this->request->getVar('record_id');
 		$insert_array =array();
 		$insert_array['status']=4;
-		// print_r($user_id);exit();
 
-		$query = $this->db->where('id', $record_id)->update($tablename, $insert_array);
-		// print_r($this->db->last_query());exit();
+		$builder = $this->db->table($tablename);
+		$builder->where('id', $record_id);
+		$query = $builder->update($insert_array);
+
 		if($query){
 			return $this->response->setJSON(array(
 				'status' => 1,
-				'msg' => 'Record Rejected successfully.'
+				'msg' => 'Record Rejected successfully.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 		}else {
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Sorry! Something went wrong, please try after some time'));
-		}
-		
+			return $this->response->setJSON(
+				array(
+					'status' => 0, 
+					'msg' => 'Sorry! Something went wrong, please try after some time',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
+		}		
 		exit();
 	}
 
 	public function user_management(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$result= array();
@@ -1047,8 +1012,14 @@ class Reporting extends Controller {
 		$result['lkp_country_list'] = $this->db->query("select * from lkp_country where  status = 1 order by slno")->getRowArray();
 		$result['tbl_role_list'] = $this->db->query("select * from tbl_role where  status = 1")->getResultArray();
 		$result['lkp_user_list'] = $this->db->query("select * from tbl_users where user_id = '".$this->session->get('login_id')."' and status = 1 ")->getRowArray();
-		$userInfo = $this->db->query("select tu.*,ctry.country_name,cty.county_name from tbl_users as tu left join lkp_country as ctry  on tu.country_id = ctry.country_id left join lkp_county as cty  on tu.county_id = cty.county_id where  tu.role_id != 1 and tu.status = 1 ");
-            $result['tbl_users_list'] = $userInfo->getResultArray();
+
+		if($this->session->get('role') ==6){
+			$userInfo = $this->db->query("select tu.*,ctry.country_name,cty.county_name from tbl_users as tu left join lkp_country as ctry  on tu.country_id = ctry.country_id left join lkp_county as cty  on tu.county_id = cty.county_id where tu.role_id != 1 and tu.status = 1 and tu.role_id = 5 and tu.country_id = '".$result['lkp_user_list']['country_id']."' ");
+		}else{
+			$userInfo = $this->db->query("select tu.*,ctry.country_name,cty.county_name from tbl_users as tu left join lkp_country as ctry  on tu.country_id = ctry.country_id left join lkp_county as cty  on tu.county_id = cty.county_id where tu.role_id != 1 and tu.status = 1 ");
+		}
+		
+        $result['tbl_users_list'] = $userInfo->getResultArray();
 
         $headerresult['country_id'] = $this->country_id;
 
@@ -1059,7 +1030,7 @@ class Reporting extends Controller {
 
 	public function user_mapping(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$result= array();
@@ -1089,7 +1060,7 @@ class Reporting extends Controller {
 
 	public function update_user_country(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$time = time();
@@ -1100,9 +1071,10 @@ class Reporting extends Controller {
 		$insert_array =array();
 		$insert_array['country_id']=$country_id;
 		$insert_array['county_id']=$county_id;
-		// print_r($insert_array);exit();
-
-		$query = $this->db->where('user_id', $user_id)->update($tablename, $insert_array);
+		
+		$builder = $this->db->table($tablename);
+		$builder->where('user_id', $user_id);
+		$query = $builder->update($insert_array);
 		if($query){
 			return $this->response->setJSON(array(
 				'csrfName' => $this->security->getCSRFTokenName(),
@@ -1124,13 +1096,13 @@ class Reporting extends Controller {
 
 	public function get_user_data_popup_modal(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$user_id = $this->request->getVar('user_id');
 
-		$result['user_data_list'] = $this->db->query("select tu.*,ctry.country_name,cty.county_name from tbl_users as tu join lkp_country as ctry ON ctry.country_id = tu.country_id join lkp_county as cty ON cty.county_id = tu.county_id where tu.status = 1 and tu.user_id = '".$user_id."' ")->getResultArray();
-		
+		$result['user_data_list'] = $this->db->query("select tu.*,ctry.country_name,cty.county_name from tbl_users as tu join lkp_country as ctry ON ctry.country_id = tu.country_id left join lkp_county as cty ON cty.county_id = tu.county_id where tu.status = 1 and tu.user_id = '".$user_id."' ")->getResultArray();
+
 		if($user_id){
 			return $this->response->setJSON(array(
 				'csrfName' => $this->security->getCSRFTokenName(),
@@ -1153,33 +1125,35 @@ class Reporting extends Controller {
 
 	public function common_dashboard(){
 		if ($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL) {
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$result= array();
 
 		$headerresult['country_id'] = $this->country_id;
 
-		return view('common/header', $headerresult);
-		return view('reporting/common_dashboard', $result);
-		return view('common/footer');
+		return view('common/header', $headerresult)
+			.view('reporting/common_dashboard', $result)
+			.view('common/footer');
 	}
 
 	public function common_comparisons(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$result= array();
-		
-		return view('common/header');
-		return view('reporting/common_comparisons', $result);		
-		return view('common/footer');
+
+		$headerresult['country_id'] = $this->country_id;
+
+		return view('common/header', $headerresult)
+			.view('reporting/common_comparisons', $result)
+			.view('common/footer');
 	}
 
 	public function get_countys(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$country_id = $this->request->getVar('country_id');
@@ -1200,12 +1174,11 @@ class Reporting extends Controller {
 			'status' => 1,
 			'result' => $result
 		));
-		exit();
 	}	
 
 	public function get_subdimensions(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$result = array();
@@ -1224,7 +1197,7 @@ class Reporting extends Controller {
 
 	public function upload_get_dimensions(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$measure_level = $this->request->getVar('measure_level');
@@ -1252,7 +1225,7 @@ class Reporting extends Controller {
 
 	public function upload_get_subdimensions(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$dimensions_id = $this->request->getVar('dimensions_id');
@@ -1276,7 +1249,7 @@ class Reporting extends Controller {
 
 	public function upload_get_category(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$sub_dimensions_id = $this->request->getVar('sub_dimensions_id');
@@ -1298,14 +1271,12 @@ class Reporting extends Controller {
 	}
 	public function get_category(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$sub_dimensions_id = $this->request->getVar('sub_dimensions_id');
-		$this->db->select('*');
-		$this->db->where('categories_status', 1);
-		$this->db->where('sub_dimensions_id', $sub_dimensions_id);
-		$result['lkp_categories_list'] = $this->db->get('lkp_categories')->result_array();
+
+		$result['lkp_categories_list'] = $this->db->query("select ct.* from lkp_categories as ct where ct.categories_status = 1 and ct.sub_dimensions_id = '".$sub_dimensions_id."'")->getResultArray();
 
 		return $this->response->setJSON(array(
 			'csrfName' => $this->security->getCSRFTokenName(),
@@ -1318,7 +1289,7 @@ class Reporting extends Controller {
 
 	public function get_indicators(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$category_id = $this->request->getVar('category_id');
@@ -1341,7 +1312,7 @@ class Reporting extends Controller {
 
 	public function get_indicators_list(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$measure_level_id = 0;
@@ -1364,7 +1335,7 @@ class Reporting extends Controller {
 
 	public function get_indicators_details(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$indicator_id = $this->request->getVar('indicator_id');
@@ -1402,7 +1373,7 @@ class Reporting extends Controller {
 
 	public function insert_indicatordata(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$measure_level_id = $this->request->getVar('measure_level');
 		$time = time();
@@ -1438,7 +1409,7 @@ class Reporting extends Controller {
 		$insert_array['user_id'] = $this->session->get('login_id');
 		$record_status = 0;
 
-		$ic_form_data_a_rset = $this->db->query("select * from ic_form_data_a where form_id IN '".$indicator_id."' and year_id IN '".$year_val."' and country_id IN '".$country_val."' and county_id IN '".$county_val."' and status IN (1,2,3,4) ")->getResultArray();
+		$ic_form_data_a_rset = $this->db->query("select * from ic_form_data_a where form_id = '".$indicator_id."' and year_id = '".$year_val."' and country_id ='".$country_val."' and county_id = '".$county_val."' and status IN (1,2,3,4)")->getResultArray();
 		foreach ($ic_form_data_a_rset as $key => $rdata) {
 			//get existing record details
 			$record_status =$rdata['status'];
@@ -1458,7 +1429,7 @@ class Reporting extends Controller {
 			
 			$builder = $this->db->table($tablename);
 			$builder->where('id', $record_id);
-			$builder->update($surv_update_data);
+			$query = $builder->update($surv_update_data);
 		}
 		if($record_status == 0){
 			//new record insert
@@ -1469,7 +1440,7 @@ class Reporting extends Controller {
 			}
 
 			$builder = $this->db->table($tablename);
-			$builder->insert($insert_array);
+			$query = $builder->insert($insert_array);
 		}
 
 		if($query){
@@ -1481,11 +1452,7 @@ class Reporting extends Controller {
 						
 						$file_name = $_FILES['data_sets']['name'];
 						$ext = pathinfo($file_name, PATHINFO_EXTENSION);
-						// $file = $file_name;
-						$file = uniqid().$key.$this->session->get('login_id').'.'.$ext;
-						// print_r("I am called");
-						// print_r($file);
-						// exit();
+						$file = uniqid().$this->session->get('login_id').'.'.$ext;
 						$path_parts = pathinfo($_FILES['data_sets']['name']);
 						$extension = $path_parts['extension'];
 						$file_type="image";
@@ -1503,34 +1470,34 @@ class Reporting extends Controller {
 						$file_directory = "upload/survey/";
 						if($filename) {
 							if(move_uploaded_file($filename, $file_directory . $file)){
-								$this->db->select('data_id');
-								$this->db->where('data_id', $insert_array['data_id'])->where('status', 1);
-								$check_record = $this->db->get('ic_data_file')->row_array();
-								 if(isset($check_record['data_id'])){
+
+								$check_record = $this->db->query("select data_id from ic_data_file where data_id = '".$insert_array['data_id']."' and status = 1 ")->getRowArray();
+
+								if(isset($check_record['data_id'])){
 									$surv_image_data = array(
-										'file_id' => time().$key.'-'.$this->session->get('login_id'),
+										'file_id' => time().'-'.$this->session->get('login_id'),
 										'form_id' => $indicator_id,
 										'user_id' => $this->session->get('login_id'),
 										'file_name' => $file,
 										'file_type' => $file_type,
 										'created_date' => $datetime,
-										'ip_address' => $this->input->ip_address(),
+										'ip_address' => $this->request->getIPAddress(),
 										'status' => 1
 									);
 
 									$builder = $this->db->table('ic_data_file');
 									$builder->where('data_id', $insert_array['data_id']);
 									$builder->update($surv_image_data);
-								 }else{
+								}else{
 									$surv_image_data = array(
-										'file_id' => time().$key.'-'.$this->session->get('login_id'),
+										'file_id' => time().'-'.$this->session->get('login_id'),
 										'data_id' => $insert_array['data_id'],
 										'form_id' => $indicator_id,
 										'user_id' => $this->session->get('login_id'),
 										'file_name' => $file,
 										'file_type' => $file_type,
 										'created_date' => $datetime,
-										'ip_address' => $this->input->ip_address(),
+										'ip_address' => $this->request->getIPAddress(),
 										'status' => 1
 									);
 									$builder = $this->db->table('ic_data_file');
@@ -1543,17 +1510,26 @@ class Reporting extends Controller {
 			}
 			return $this->response->setJSON(array(
 				'status' => 1,
-				'msg' => 'Submitted successfully.'
+				'msg' => 'Submitted successfully.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 		}else {
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Sorry! Something went wrong, please try after some time'));
+			return $this->response->setJSON(
+				array(
+					'status' => 0,
+					'msg' => 'Sorry! Something went wrong, please try after some time',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 		}
 		exit();
 	}
 
 	public function update_indicatordata(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$time = time();
@@ -1588,46 +1564,48 @@ class Reporting extends Controller {
 		if($query){
 			return $this->response->setJSON(array(
 				'status' => 1,
-				'msg' => 'Submitted successfully.'
+				'msg' => 'Submitted successfully.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 		}else {
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Sorry! Something went wrong, please try after some time'));
+			return $this->response->setJSON(
+				array(
+					'status' => 0,
+					'msg' => 'Sorry! Something went wrong, please try after some time',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 		}
 	}
 
 	public function get_indicator_data(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$indicator_id = $this->request->getVar('indicator_id');
 		$user_country = $this->request->getVar('user_country');
-		// $this->db->select('*');
-		// $this->db->where_in('query_status', [2,3]);
-		// $this->db->where('form_id', $indicator_id);
-		// $result['lkp_indicator_data_list'] = $this->db->get('ic_form_data_a')->result_array();
 
-		$this->db->select('icd.*,y.year,ctr.country_name,cty.county_name');
-		$this->db->join('lkp_year as y', 'icd.year_id = y.year_id');
-		$this->db->join('lkp_country as ctr', 'icd.country_id = ctr.country_id');
-		$this->db->join('lkp_county as cty', 'icd.county_id = cty.county_id');
 		if($this->session->get('role')==6){
-			$this->db->where('icd.country_id', $user_country);
+			$result['lkp_indicator_data_list'] = $this->db->query("select icd.*,y.year,ctr.country_name,cty.county_name from ic_form_data_a as icd join lkp_year as y on icd.year_id = y.year_id join lkp_country as ctr on icd.country_id = ctr.country_id join lkp_county as cty on icd.county_id = cty.county_id where icd.status in (2,3,4) and icd.form_id = '".$indicator_id."' and icd.country_id = '".$user_country."' ")->getResultArray();
+		}else{
+			$result['lkp_indicator_data_list'] = $this->db->query("select icd.*,y.year,ctr.country_name,cty.county_name from ic_form_data_a as icd join lkp_year as y on icd.year_id = y.year_id join lkp_country as ctr on icd.country_id = ctr.country_id join lkp_county as cty on icd.county_id = cty.county_id where icd.status in (2,3,4) and icd.form_id = '".$indicator_id."'")->getResultArray();
 		}
-		$this->db->where_in('icd.status', [2,3,4]);
-		$this->db->where('icd.form_id', $indicator_id);
-		$result['lkp_indicator_data_list'] = $this->db->get('ic_form_data_a as icd')->result_array();
 
 		return $this->response->setJSON(array(
 			'status' => 1,
-			'result' => $result
+			'result' => $result,
+			'csrfName' => $this->security->getCSRFTokenName(),
+			'csrfHash' => $this->security->getCSRFHash(),
 		));
 		exit();
 	}
 
 	public function replace_indicatordata_csv(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$indicator_id = $this->request->getVar('indicator_id');
@@ -1667,7 +1645,7 @@ class Reporting extends Controller {
 	}
 	public function edit_data1(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$form_id = $this->uri->getSegment('3');
@@ -1930,21 +1908,34 @@ class Reporting extends Controller {
 		$this->db->where('sdg_sub_status', 1);
 		$result['lkp_sdg_sub'] = $this->db->get('lkp_sdg_sub')->result_array();
 		//getting common lkp data from tables end upto here
-		return view('common/header');
+
+		$headerresult['country_id'] = $this->country_id;
+		
 		if($result['formtype'] == 'output'){
 			// return view('reporting/outputdata_submission', $result);
-			return view('reporting/online_data_edit', $result);
+			return view('common/header', $headerresult)
+			.view('reporting/online_data_edit', $result)
+			.view('common/footer');
 		}else{
-			return view('reporting/online_data_edit', $result);
+			return view('common/header', $headerresult)
+			.view('reporting/online_data_edit', $result)
+			.view('common/footer');
 		}	
 		// return view('reporting/online_data_edit'	);	
-		return view('common/footer');
+		
 	}
 
 	public function check_childfields(){
 		$baseurl = base_url();
 		if($this->session->get('login_id') == '') {
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Your session has expired please login and try again'));
+			return $this->response->setJSON(
+				array(
+					'status' => 0, 
+					'msg' => 'Your session has expired please login and try again',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 			exit();
 		}
 
@@ -2223,7 +2214,12 @@ class Reporting extends Controller {
 			}
 
 			$get_child_fields = array_values($get_child_fields);
-			$result = array('status' => 1, 'child_field' => $get_child_fields);
+			$result = array(
+				'status' => 1,
+				'child_field' => $get_child_fields,
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
+			);
 		}
 		return $this->response->setJSON($result);
 		exit();	
@@ -2235,7 +2231,9 @@ class Reporting extends Controller {
 		if($this->session->get('login_id') == '') {
 			return $this->response->setJSON(array(
 				'status' => 0,
-				'msg' => 'Session Expired! Please login again to continue.'
+				'msg' => 'Session Expired! Please login again to continue.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 			exit();
 		}
@@ -2411,7 +2409,7 @@ class Reporting extends Controller {
 		}		
 		$insert_array['user_id'] = $this->session->get('login_id');
 		$insert_array['reg_date_time'] = $datetime;
-		$insert_array['ip_address'] = $this->input->ip_address();
+		$insert_array['ip_address'] = $this->request->getIPAddress();
 		if(($user_role == 5) && $status == 2 && $form_details['type'] != 1){
 			// $insert_array['status'] = 3;
 			$insert_array['status'] = $status;
@@ -2453,7 +2451,7 @@ class Reporting extends Controller {
 						'new_value' => $insert_array['form_data'],
 						'edited_reason' => 'User editted',
 						'updated_date' => date('Y-m-d H:i:s'),
-						'ip_address' => $this->input->ip_address(),
+						'ip_address' => $this->request->getIPAddress(),
 						'log_status' => 1
 					);
 
@@ -2469,7 +2467,7 @@ class Reporting extends Controller {
 						'new_value' => $insert_array['status'],
 						'edited_reason' => 'User editted',
 						'updated_date' => date('Y-m-d H:i:s'),
-						'ip_address' => $this->input->ip_address(),
+						'ip_address' => $this->request->getIPAddress(),
 						'log_status' => 1
 					);
 
@@ -2556,7 +2554,7 @@ class Reporting extends Controller {
 	
 										$groupdata['formgroup_data'] = json_encode($field_array, JSON_UNESCAPED_UNICODE);
 										$groupdata['reg_date_time'] = $datetime;
-										$groupdata['ip_address'] = $this->input->ip_address();
+										$groupdata['ip_address'] = $this->request->getIPAddress();
 										$groupdata['status'] = 2;
 	
 										$surv_group_data = $this->security->xss_clean($groupdata);
@@ -2598,7 +2596,7 @@ class Reporting extends Controller {
 										}							
 										$groupdata['user_id'] = $this->session->get('login_id');
 										$groupdata['reg_date_time'] = $datetime;
-										$groupdata['ip_address'] = $this->input->ip_address();
+										$groupdata['ip_address'] = $this->request->getIPAddress();
 										if(($user_role == 4 || $user_role == 5 || $user_role == 6) && $status == 2 && $form_details['type'] != 1){
 											$groupdata['status'] = 3;
 										}else{
@@ -2644,7 +2642,7 @@ class Reporting extends Controller {
 								}							
 								$groupdata['user_id'] = $this->session->get('login_id');
 								$groupdata['reg_date_time'] = $datetime;
-								$groupdata['ip_address'] = $this->input->ip_address();
+								$groupdata['ip_address'] = $this->request->getIPAddress();
 								if(($user_role == 4 || $user_role == 5 || $user_role == 6) && $status == 2 && $form_details['type'] != 1){
 									$groupdata['status'] = 3;
 								}else{
@@ -2833,7 +2831,7 @@ class Reporting extends Controller {
 								// 		'file_name' => $file,
 								// 		'file_type' => $file_type,
 								// 		'created_date' => $datetime,
-								// 		'ip_address' => $this->input->ip_address(),
+								// 		'ip_address' => $this->request->getIPAddress(),
 								// 		'status' => 1
 								// 	);
 								// 	$this->db->where('data_id', $insert_array['data_id'])->update('ic_data_file', $surv_image_data);
@@ -2847,7 +2845,7 @@ class Reporting extends Controller {
 										'file_name' => $file,
 										'file_type' => $file_type,
 										'created_date' => $datetime,
-										'ip_address' => $this->input->ip_address(),
+										'ip_address' => $this->request->getIPAddress(),
 										'status' => 1
 									);
 									$this->db->insert('ic_data_file', $surv_image_data);
@@ -2859,10 +2857,19 @@ class Reporting extends Controller {
 			}
 			return $this->response->setJSON(array(
 				'status' => 1,
-				'msg' => $ajax_message
+				'msg' => $ajax_message,
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 		} else {
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Sorry! Something went wrong, please try after some time'));
+			return $this->response->setJSON(
+				array(
+					'status' => 0,
+					'msg' => 'Sorry! Something went wrong, please try after some time',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 		}
 		exit();
 	}
@@ -2873,7 +2880,9 @@ class Reporting extends Controller {
 		if($this->session->get('login_id') == '') {
 			return $this->response->setJSON(array(
 				'status' => 0,
-				'msg' => 'Session Expired! Please login again to continue.'
+				'msg' => 'Session Expired! Please login again to continue.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 			exit();
 		}
@@ -3059,7 +3068,7 @@ class Reporting extends Controller {
 		}		
 		$insert_array['user_id'] = $this->session->get('login_id');
 		$insert_array['reg_date_time'] = $datetime;
-		$insert_array['ip_address'] = $this->input->ip_address();
+		$insert_array['ip_address'] = $this->request->getIPAddress();
 		if(($user_role == 5) && $status == 2 && $form_details['type'] != 1){
 			$insert_array['status'] = 3;
 		}else{
@@ -3101,7 +3110,7 @@ class Reporting extends Controller {
 						'new_value' => $insert_array['form_data'],
 						'edited_reason' => 'User editted',
 						'updated_date' => date('Y-m-d H:i:s'),
-						'ip_address' => $this->input->ip_address(),
+						'ip_address' => $this->request->getIPAddress(),
 						'log_status' => 1
 					);
 
@@ -3117,7 +3126,7 @@ class Reporting extends Controller {
 						'new_value' => $insert_array['status'],
 						'edited_reason' => 'User editted',
 						'updated_date' => date('Y-m-d H:i:s'),
-						'ip_address' => $this->input->ip_address(),
+						'ip_address' => $this->request->getIPAddress(),
 						'log_status' => 1
 					);
 
@@ -3132,7 +3141,7 @@ class Reporting extends Controller {
 
 		if($query) {
 			$groupdata['reg_date_time'] = $datetime;
-			$groupdata['ip_address'] = $this->input->ip_address();
+			$groupdata['ip_address'] = $this->request->getIPAddress();
 			$groupdata['status'] = 2;
 
 			$group_table_name = "ic_form_group_data";
@@ -3213,7 +3222,7 @@ class Reporting extends Controller {
 	
 			// 							$groupdata['formgroup_data'] = json_encode($field_array, JSON_UNESCAPED_UNICODE);
 			// 							$groupdata['reg_date_time'] = $datetime;
-			// 							$groupdata['ip_address'] = $this->input->ip_address();
+			// 							$groupdata['ip_address'] = $this->request->getIPAddress();
 			// 							$groupdata['status'] = 2;
 	
 			// 							$surv_group_data = $this->security->xss_clean($groupdata);
@@ -3256,7 +3265,7 @@ class Reporting extends Controller {
 			// 							}							
 			// 							$groupdata['user_id'] = $this->session->get('login_id');
 			// 							$groupdata['reg_date_time'] = $datetime;
-			// 							$groupdata['ip_address'] = $this->input->ip_address();
+			// 							$groupdata['ip_address'] = $this->request->getIPAddress();
 			// 							if(($user_role == 5) && $status == 2 && $form_details['type'] != 1){
 			// 								$groupdata['status'] = 3;
 			// 							}else{
@@ -3303,7 +3312,7 @@ class Reporting extends Controller {
 			// 					}							
 			// 					$groupdata['user_id'] = $this->session->get('login_id');
 			// 					$groupdata['reg_date_time'] = $datetime;
-			// 					$groupdata['ip_address'] = $this->input->ip_address();
+			// 					$groupdata['ip_address'] = $this->request->getIPAddress();
 			// 					if(($user_role == 5) && $status == 2 && $form_details['type'] != 1){
 			// 						$groupdata['status'] = 3;
 			// 					}else{
@@ -3467,7 +3476,7 @@ class Reporting extends Controller {
 					// existing files db records update status 0
 					$surv_image_data1 = array(
 						'created_date' => $datetime,
-						'ip_address' => $this->input->ip_address(),
+						'ip_address' => $this->request->getIPAddress(),
 						'status' => 0
 					);
 					$this->db->where('data_id', $insert_array['data_id'])->where('status', 1)->update('ic_data_file', $surv_image_data1);
@@ -3509,7 +3518,7 @@ class Reporting extends Controller {
 										// 	'file_name' => $file,
 										// 	'file_type' => $file_type,
 										// 	'created_date' => $datetime,
-										// 	'ip_address' => $this->input->ip_address(),
+										// 	'ip_address' => $this->request->getIPAddress(),
 										// 	'status' => 1
 										// );
 										// $this->db->where('data_id', $insert_array['data_id'])->update('ic_data_file', $surv_image_data);
@@ -3524,7 +3533,7 @@ class Reporting extends Controller {
 											'file_name' => $file,
 											'file_type' => $file_type,
 											'created_date' => $datetime,
-											'ip_address' => $this->input->ip_address(),
+											'ip_address' => $this->request->getIPAddress(),
 											'status' => 1
 										);
 										$this->db->insert('ic_data_file', $surv_image_data);
@@ -3537,10 +3546,19 @@ class Reporting extends Controller {
 			}
 			return $this->response->setJSON(array(
 				'status' => 1,
-				'msg' => $ajax_message
+				'msg' => $ajax_message,
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 		} else {
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Sorry! Something went wrong, please try after some time'));
+			return $this->response->setJSON(
+				array(
+					'status' => 0,
+					'msg' => 'Sorry! Something went wrong, please try after some time',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 		}
 		exit();
 	}
@@ -3548,7 +3566,14 @@ class Reporting extends Controller {
 	public function nothingto_report(){
 		$baseurl = base_url();
 		if($this->session->get('login_id') == '') {
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Your session has expired please login and try again'));
+			return $this->response->setJSON(
+				array(
+					'status' => 0,
+					'msg' => 'Your session has expired please login and try again',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 			exit();
 		}
 		date_default_timezone_set("UTC");
@@ -3570,7 +3595,7 @@ class Reporting extends Controller {
 			'approve_by' => NULL,
 			'approve_date' => NULL,
 			'reg_date_time' => date('Y-m-d H:i:s'),
-			'ip_address' =>  $this->input->ip_address(),
+			'ip_address' =>  $this->request->getIPAddress(),
 			'query_status' => NULL
 		);
 		if($user_role == 4 || $user_role == 5 || $user_role == 6){
@@ -3583,11 +3608,20 @@ class Reporting extends Controller {
 		if($table_query){
 			return $this->response->setJSON(array(
 				'status' => 1,
-				'msg' => 'Submitted successfully.'
+				'msg' => 'Submitted successfully.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 			exit();
 		}else{
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Sorry! Something went wrong, please try after some time'));
+			return $this->response->setJSON(
+				array(
+					'status' => 0,
+					'msg' => 'Sorry! Something went wrong, please try after some time',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 			exit();
 		}
 	}
@@ -3595,7 +3629,14 @@ class Reporting extends Controller {
 	public function submit_summaryreport(){
 		$baseurl = base_url();
 		if($this->session->get('login_id') == '') {
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Your session has expired please login and try again'));
+			return $this->response->setJSON(
+				array(
+					'status' => 0,
+					'msg' => 'Your session has expired please login and try again',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 			exit();
 		}
 		date_default_timezone_set("UTC");
@@ -3620,7 +3661,7 @@ class Reporting extends Controller {
 				'user_id' => $this->session->get('login_id'),
 				'comment' => $this->request->getVar('comment'),
 				'added_date' => date('Y-m-d H:i:s'),
-				'ip_address' =>  $this->input->ip_address(),
+				'ip_address' =>  $this->request->getIPAddress(),
 				'status' => 1
 			);
 			$table_query = $this->db->insert('ic_summary_report', $insert_array);
@@ -3629,11 +3670,20 @@ class Reporting extends Controller {
 		if($table_query){
 			return $this->response->setJSON(array(
 				'status' => 1,
-				'msg' => 'Submitted successfully.'
+				'msg' => 'Submitted successfully.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 			exit();
 		}else{
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Sorry! Something went wrong, please try after some time'));
+			return $this->response->setJSON(
+				array(
+					'status' => 0,
+					'msg' => 'Sorry! Something went wrong, please try after some time',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 			exit();
 		}
 	}
@@ -3641,7 +3691,14 @@ class Reporting extends Controller {
 	public function removenothingto_report(){
 		$baseurl = base_url();
 		if($this->session->get('login_id') == '') {
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Your session has expired please login and try again'));
+			return $this->response->setJSON(
+				array(
+					'status' => 0,
+					'msg' => 'Your session has expired please login and try again',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 			exit();
 		}
 		date_default_timezone_set("UTC");
@@ -3671,11 +3728,20 @@ class Reporting extends Controller {
 		if($table_query){
 			return $this->response->setJSON(array(
 				'status' => 1,
-				'msg' => 'Submitted successfully.'
+				'msg' => 'Submitted successfully.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 			exit();
 		}else{
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Sorry! Something went wrong, please try after some time'));
+			return $this->response->setJSON(
+				array(
+					'status' => 0,
+					'msg' => 'Sorry! Something went wrong, please try after some time',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 			exit();
 		}
 	}
@@ -3683,7 +3749,14 @@ class Reporting extends Controller {
 	public function get_summarydata(){
 		$baseurl = base_url();
 		if($this->session->get('login_id') == '') {
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Your session has expired please login and try again'));
+			return $this->response->setJSON(
+				array(
+					'status' => 0,
+					'msg' => 'Your session has expired please login and try again',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 			exit();
 		}
 		date_default_timezone_set("UTC");
@@ -3694,11 +3767,25 @@ class Reporting extends Controller {
 
 		$check_data = $this->db->where('crop_id', $crop_id[0])->where('country_id', $country_id[0])->where('year_id', $this->request->getVar('year'))->where('user_id', $this->session->get('login_id'))->where('status', 1)->get('ic_summary_report');
 		if($check_data->num_rows() == 0){
-			return $this->response->setJSON(array('status' => 1, 'comment' => ''));
+			return $this->response->setJSON(
+				array(
+					'status' => 1,
+					'comment' => '',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 			exit();
 		}else{
 			$data = $check_data->row_array();
-			return $this->response->setJSON(array('status' => 1, 'comment' => $data['comment']));
+			return $this->response->setJSON(
+				array(
+					'status' => 1,
+					'comment' => $data['comment'],
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 			exit();
 		}
 	}
@@ -3786,9 +3873,11 @@ class Reporting extends Controller {
 			$result['lkp_crop_list'] = $this->db->get('lkp_crop')->result_array();
 			//getting common lkp data from tables end upto here
 
-			return view('common/header');
-			return view('reporting/avisa_excelupload', $result);		
-			return view('common/footer');
+			$headerresult['country_id'] = $this->country_id;
+
+			return view('common/header', $headerresult)
+			.view('reporting/avisa_excelupload', $result)
+			.view('common/footer');
 		}else{
 			show_404();
 		}
@@ -3800,7 +3889,9 @@ class Reporting extends Controller {
 		if($this->session->get('login_id') == '') {
 			return $this->response->setJSON(array(
 				'status' => 0,
-				'msg' => 'Session Expired! Please login again to continue.'
+				'msg' => 'Session Expired! Please login again to continue.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 			exit();
 		}
@@ -3833,7 +3924,14 @@ class Reporting extends Controller {
 				if($column == $get_max_column_count['max_val']){
 				}else{
 					unlink($file_directory.''.$new_file_name);
-					return $this->response->setJSON(array('status' => 0, 'msg' => 'Invalid number of columns in the excel choosen.'));
+					return $this->response->setJSON(
+						array(
+							'status' => 0,
+							'msg' => 'Invalid number of columns in the excel choosen.',
+							'csrfName' => $this->security->getCSRFTokenName(),
+							'csrfHash' => $this->security->getCSRFHash(),
+						)
+					);
 					exit();
 				}
 			}
@@ -3907,7 +4005,7 @@ class Reporting extends Controller {
 			$insert_array['form_data'] = NULL;
 		}
 		$insert_array['user_id'] = $this->session->get('login_id');
-		$insert_array['ip_address'] = $this->input->ip_address();
+		$insert_array['ip_address'] = $this->request->getIPAddress();
 		$insert_array['reg_date_time'] = $datetime;
 		$insert_array['status'] = 1;
 
@@ -3956,7 +4054,7 @@ class Reporting extends Controller {
 						$groupdata['formgroup_data'] = NULL;
 					}
 					$groupdata['user_id'] = $this->session->get('login_id');
-					$groupdata['ip_address'] = $this->input->ip_address();
+					$groupdata['ip_address'] = $this->request->getIPAddress();
 					$groupdata['reg_date_time'] = $datetime;
 					$groupdata['status'] = 1;
 
@@ -3977,11 +4075,20 @@ class Reporting extends Controller {
 				'msg' => $ajax_message,
 				'get_groupdata' => $get_groupdata,
 				'get_groupfields' => $get_groupfields,
-				'record_id' => $insert_array['data_id']
+				'record_id' => $insert_array['data_id'],
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));			
 			exit();
 		} else {
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Sorry! Something went wrong, please try after some time'));
+			return $this->response->setJSON(
+				array(
+					'status' => 0,
+					'msg' => 'Sorry! Something went wrong, please try after some time',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 			exit();
 		}
 	}
@@ -3992,7 +4099,9 @@ class Reporting extends Controller {
 		if($this->session->get('login_id') == '') {
 			return $this->response->setJSON(array(
 				'status' => 0,
-				'msg' => 'Session Expired! Please login again to continue.'
+				'msg' => 'Session Expired! Please login again to continue.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 			exit();
 		}
@@ -4030,10 +4139,24 @@ class Reporting extends Controller {
 		$grouptable_query = $this->db->update($group_table_name, $update_grouptabledata);
 
 		if($table_query == 1 && $grouptable_query == 1){
-			return $this->response->setJSON(array('status' => 1, 'msg' => 'Approved successfully'));
+			return $this->response->setJSON(
+				array(
+					'status' => 1,
+					'msg' => 'Approved successfully',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 			exit();
 		}else{
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Sorry! Something went wrong, please try after some time'));
+			return $this->response->setJSON(
+				array(
+					'status' => 0,
+					'msg' => 'Sorry! Something went wrong, please try after some time',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 			exit();
 		}
 	}
@@ -4044,7 +4167,9 @@ class Reporting extends Controller {
 		if($this->session->get('login_id') == '') {
 			return $this->response->setJSON(array(
 				'status' => 0,
-				'msg' => 'Session Expired! Please login again to continue.'
+				'msg' => 'Session Expired! Please login again to continue.',
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 			exit();
 		}
@@ -4083,27 +4208,46 @@ class Reporting extends Controller {
 				'new_value' => 0,
 				'edited_reason' => $reason,
 				'updated_date' => date('Y-m-d H:i:s'),
-				'ip_address' => $this->input->ip_address(),
+				'ip_address' => $this->request->getIPAddress(),
 				'log_status' => 1
 			);
 
 			$query = $this->db->insert('ic_log', $insert_log_array);
 
 			if(!$query){
-				$result = array('status' => 0, 'msg' => 'Data updated Successfully and went wrong with log');
+				$result = array(
+					'status' => 0,
+					'msg' => 'Data updated Successfully and went wrong with log',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				);
 			}else{
-				return $this->response->setJSON(array('status' => 1, 'msg' => 'Group data deleted successfully'));
+				return $this->response->setJSON(
+					array(
+						'status' => 1,
+						'msg' => 'Group data deleted successfully',
+						'csrfName' => $this->security->getCSRFTokenName(),
+						'csrfHash' => $this->security->getCSRFHash(),
+					)
+				);
 				exit();
 			}
 		}else{
-			return $this->response->setJSON(array('status' => 0, 'msg' => 'Sorry! Something went wrong, please try after some time'));
+			return $this->response->setJSON(
+				array(
+					'status' => 0,
+					'msg' => 'Sorry! Something went wrong, please try after some time',
+					'csrfName' => $this->security->getCSRFTokenName(),
+					'csrfHash' => $this->security->getCSRFHash(),
+				)
+			);
 			exit();
 		}
 	}
 
 	public function review_data(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$form_id = $this->uri->getSegment('3');
@@ -4288,19 +4432,23 @@ class Reporting extends Controller {
 		$this->db->where('year_id', $year_id)->where('country_id', $country_id)->where('crop_id', $crop_id)->where('user_id', $this->session->get('login_id'))->where('nothingto_report', 1);
 		$result['nothingto_report'] = $this->db->get('ic_form_data')->num_rows();
 
-		return view('common/header');
+		$headerresult['country_id'] = $this->country_id;
+
 		if($result['formtype'] == 'output'){
-			return view('reporting/review_data', $result);
+			return view('common/header', $headerresult)
+			.view('reporting/review_data', $result)
+			.view('common/footer');
 		}else{
-			return view('reporting/online_data_submission', $result);
+			return view('common/header', $headerresult)
+			.view('reporting/online_data_submission', $result)
+			.view('common/footer');
 		}		
-		return view('common/footer');
 	}
 
 	public function getInitialData()
 	{
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$measure_level_id = $this->request->getVar('measure_level_id');

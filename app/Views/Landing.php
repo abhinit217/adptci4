@@ -389,7 +389,7 @@
                                                 <h4 class="title mb-0">Ethiopia</h4>
                                             </div>
                                             <div>
-                                                <a href="<?php echo base_url(); ?>Login/" class="goDim cursor"> <img
+                                                <a href="<?php echo base_url(); ?>login/" class="goDim cursor"> <img
                                                         src="<?php echo base_url(); ?>include/assets/images/Arrow_Right.svg"></a>
                                             </div>
                                         </div>
@@ -408,7 +408,7 @@
                                                 <h4 class="title mb-0">Kenya </h4>
                                             </div>
                                             <div>
-                                                <a href="<?php echo base_url(); ?>Login/" class="goDim cursor"> <img
+                                                <a href="<?php echo base_url(); ?>login/" class="goDim cursor"> <img
                                                         src="<?php echo base_url(); ?>include/assets/images/Arrow_Right.svg"></a>
                                             </div>
                                         </div>
@@ -427,7 +427,7 @@
                                                 <h4 class="title mb-0">Uganda</h4>
                                             </div>
                                             <div>
-                                                <a href="<?php echo base_url(); ?>Login/" class="goDim cursor"> <img
+                                                <a href="<?php echo base_url(); ?>login/" class="goDim cursor"> <img
                                                         src="<?php echo base_url(); ?>include/assets/images/Arrow_Right.svg"></a>
                                             </div>
                                         </div>

@@ -68,43 +68,42 @@
                                     <!-- <button type="button" class="btn btn-sm btn-success approve_data"  data-recordid="'+ field.id +'" style="margin-right:10px;">Refresh data</button> -->
                                 </div>
                                 <div class="card-body p-3">
-                                    <form id="queryForm" data-id="<?php echo $data_id;?>" data-user="<?php echo $this->session->userdata('login_id');?>">
+                                    <form id="queryForm" data-id="<?php echo $data_id;?>" data-user="<?php echo $this->session->get('login_id');?>">
+                                        <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" />
                                         <div class="form">
                                             <div class="row">
-                                            <?php 
-                                            foreach($data_list as $key =>$value){
-                                                // $user_id = $value['user_id'];
-                                                $user_id = $this->session->userdata('login_id');
-                                                $record_status=$value['status'];
-                                            }
+                                                <?php foreach($data_list as $key =>$value){
+                                                    // $user_id = $value['user_id'];
+                                                    $user_id = $this->session->get('login_id');
+                                                    $record_status=$value['status'];
+                                                }
+
                                                 $county_id = $lkp_user_list['country_id'];
-                                                    switch ($county_id) {
-                                                        case '1':
-                                                            # code...
-                                                            $county_name="County";
-                                                            break;
+                                                switch ($county_id) {
+                                                    case '1':
+                                                        # code...
+                                                        $county_name="County";
+                                                        break;
 
-                                                        case '2':
-                                                            # code...
-                                                            $county_name="District";
-                                                            break;
+                                                    case '2':
+                                                        # code...
+                                                        $county_name="District";
+                                                        break;
 
-                                                        case '3':
-                                                            # code...
-                                                            $county_name="Zone";
-                                                            break;
-                                                        
-                                                        default:
-                                                            # code...
-                                                            $county_name="County / Zone / District";
-                                                            break;
-                                                    }
-                                                    ?>
+                                                    case '3':
+                                                        # code...
+                                                        $county_name="Zone";
+                                                        break;
+                                                    
+                                                    default:
+                                                        # code...
+                                                        $county_name="County / Zone / District";
+                                                        break;
+                                                } ?>
                                                
                                                 <div class="col-sm-12 col-md-4 col-lg-4">
                                                     <div class="form-group">
                                                         <label for="">Dimension </label> : <?php echo $lkp_dimensions_name;?>
-                                                        
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-12 col-md-4 col-lg-4">
@@ -155,91 +154,68 @@
 
                                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                                     <div class="col-sm-12 form-group">
-                                                        <div class="border" style="border-bottom:none !important;border: 4px solid black !important;">
-                                                        <?php
-                                                        if($queries){
-                                                            
-                                                            foreach($queries as $qkey =>$qvalue){
-                                                                
-                                                                
-                                                                if($qvalue['sent_by'] == $user_id){
-                                                                    ?><div class="media d-block d-sm-flex text-right">
-                                                                        <div class="media-body pt-3 pt-sm-0 m-3 tcolorg">
-                                                                            <h5 class="mg-b-5 tx-inverse tx-15">
-                                                                                <i class="fa fa-calendar"></i> Posted On : <?php echo $qvalue['query_datetime']?>
-                                                                                <span class="mx-1">|</span>
-                                                                                <i class="fa fa-user"></i> By : <?php echo $qvalue['first_name']?> <?php echo $qvalue['last_name']?> 
-                                                                            </h5>
-                                                                            <p><?php echo $qvalue['query']?> </p>
-                                                                            <hr class="my-4">
+                                                        <div class="borderMsg" style="border-bottom:none !important;border: 4px solid black !important;">
+                                                            <?php if($queries){
+                                                                foreach($queries as $qkey =>$qvalue){
+                                                                    if($qvalue['sent_by'] == $user_id){ ?>
+                                                                        <div class="media d-block d-sm-flex text-right">
+                                                                            <div class="media-body pt-3 pt-sm-0 m-3 tcolorg">
+                                                                                <h5 class="mg-b-5 tx-inverse tx-15">
+                                                                                    <i class="fa fa-calendar"></i> Posted On : <?php echo $qvalue['query_datetime']?>
+                                                                                    <span class="mx-1">|</span>
+                                                                                    <i class="fa fa-user"></i> By : <?php echo $qvalue['first_name']?> <?php echo $qvalue['last_name']?> 
+                                                                                </h5>
+                                                                                <p><?php echo $qvalue['query']?> </p>
+                                                                                <hr class="my-4">
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                    <?php
-                                                                }else{
-                                                                    ?>
-                                                                    <div class="media d-block d-sm-flex">
-                                                                        <div class="media-body pt-3 pt-sm-0 m-3 tcolorb">
-                                                                            <h5 class="mg-b-5 tx-inverse tx-15">
-                                                                                <i class="fa fa-user"></i> By : <?php echo $qvalue['first_name']?> <?php echo $qvalue['last_name']?>
-                                                                                <span class="mx-1">|</span>
-                                                                                <i class="fa fa-calendar"></i> Posted On : <?php echo $qvalue['query_datetime']?>
-                                                                            </h5>
-                                                                            <p><?php echo $qvalue['query']?> </p>
-                                                                            <hr class="my-4">
+                                                                    <?php }else{ ?>
+                                                                        <div class="media d-block d-sm-flex">
+                                                                            <div class="media-body pt-3 pt-sm-0 m-3 tcolorb">
+                                                                                <h5 class="mg-b-5 tx-inverse tx-15">
+                                                                                    <i class="fa fa-user"></i> By : <?php echo $qvalue['first_name']?> <?php echo $qvalue['last_name']?>
+                                                                                    <span class="mx-1">|</span>
+                                                                                    <i class="fa fa-calendar"></i> Posted On : <?php echo $qvalue['query_datetime']?>
+                                                                                </h5>
+                                                                                <p><?php echo $qvalue['query']?> </p>
+                                                                                <hr class="my-4">
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                    <?php
+                                                                    <?php } 
                                                                 }
-                                                                
-                                                            }
-                                                            if($role_id==5){
-                                                                $c_text="Respond to the query...";
-                                                            } else if($role_id==6){
-                                                                $c_text="Comment...";
+                                                                if($role_id==5){
+                                                                    $c_text="Respond to the query...";
+                                                                } else if($role_id==6){
+                                                                    $c_text="Comment...";
+                                                                }else{
+                                                                    $c_text="Comment...";
+                                                                }
                                                             }else{
                                                                 $c_text="Comment...";
-                                                            }
-                                                        }else{
-                                                            $c_text="Comment...";
-                                                        }
-                                                        ?></div>
+                                                            } ?>
+                                                        </div>
                                                     </div>
 
                                                     <div class="col-sm-12 col-md-4 col-lg-4">
-                                                        <?php 
-                                                            if($record_status==2){
-                                                                ?>
-                                                        <textarea class="form-control" name="query" placeholder="<?php echo $c_text;?>"></textarea>
-                                                        <span class="query error text-danger"></span>
-                                                        <?php
-                                                            }
-                                                            ?>
+                                                        <?php if(isset($record_status) && $record_status==2){ ?>
+                                                            <textarea class="form-control" name="query" placeholder="<?php echo $c_text;?>"></textarea>
+                                                            <span class="query error text-danger"></span>
+                                                        <?php } ?>
                                                     </div>
+                                                    
                                                     <div class="col-sm-12 col-md-12 col-lg-12 text-center">
-                                                        
-                                                        <?php 
-                                                            if($record_status==2){
-                                                                ?>
-                                                                <button class="btn btn-success btn-sm" type="submit">Send Back</button>
-                                                                <?php
-                                                                if($role_id==6){
-                                                                    ?>
-                                                                    <button type="button" class="btn btn-sm btn-success approve_data"  data-recordid="<?php echo $record_id;?>" style="margin-right:10px;">Approve</button>
-                                                                    <?php
-                                                                }
-                                                                 
-                                                            }else{
-                                                                ?>
-                                                                This data has been approved and cannot be further verified or sent back
-                                                                <?php
-
-                                                            }
-                                                        ?>  
+                                                        <?php if(isset($record_status) && $record_status==2){ ?>
+                                                            <button class="btn btn-success btn-sm" type="submit">Send Back</button>
+                                                            <?php if($role_id==6){ ?>
+                                                                <button type="button" class="btn btn-sm btn-success approve_data"  data-recordid="<?php echo $record_id;?>" style="margin-right:10px;">Approve</button>
+                                                                
+                                                            <?php }
+                                                        }else{
+                                                            echo "This data has been approved and cannot be further verified or sent back";
+                                                        } ?>  
                                                     </div>
-                                                </div>
-                                                 
-                                            </div>
-                                            
+                                                </div>                                                 
+                                            </div>                                            
                                         </div>
                                     </form>
                                 </div>
@@ -256,18 +232,20 @@
 <script src="<?php echo base_url(); ?>include/assets/plugins/sisyphus/sisyphus.min.js"></script>
 <script src="<?php echo base_url(); ?>include/assets/plugins/wysiwyag/jquery.richtext.js"></script>
 <script type="text/javascript">
-    
+
+    var csrfName = '<?= csrf_token() ?>';
+    var csrfHash = '<?= csrf_hash() ?>';
     $('body').on('submit', '#queryForm', function(event) {
-		event.preventDefault();
-		var form = $(this),
-		formData = new FormData(form[0]);
-		formData.append('id', form.data('id'));
+        event.preventDefault();
+        var form = $(this),
+        formData = new FormData(form[0]);
+        formData.append('id', form.data('id'));
         var roleID = <?php echo $role_id?>;
         var path= "";
-        if(roleID==6){
+        if(roleID == 6 || roleID == 1){
             // Country Admin
             path= "<?php echo base_url(); ?>reporting/send_back";
-        }else if(roleID==5){
+        }else if(roleID == 5){
             //county Admin
             path= "<?php echo base_url(); ?>reporting/respond_query";
         }
@@ -279,77 +257,83 @@
 			processData: false,
 			contentType: false,
 			error: function() {
-				$.toast({
-					heading: 'Error!',
-					text: 'Please check your internet connection and try again.',
-					icon: 'error'
-				});
-				form.find('button').prop('disabled', false);
-			},
-			success: function(response){
-				var response = JSON.parse(response);
+                $.toast({
+                    heading: 'Error!',
+                    text: 'Please check your internet connection and try again.',
+                    icon: 'error'
+                });
+                form.find('button').prop('disabled', false);
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
+            },
+            success: function(response){
+                if(response.status == 0) {
+                    if(response.errors && response.errors.length > 0) {
+                        for(var key in response.errors) {
+                            var errorContainer = form.find(`.${key}.error`);
+                            if(errorContainer.length !== 0) {
+                                errorContainer.html(response.errors[key]);
+                            }
+                        }
+                    } else {
+                        $.toast({
+                            heading: 'Error!',
+                            text: response.msg,
+                            icon: 'error',
+                            afterHidden: function () {
+                                form.find('button').prop('disabled', false);
+                            }
+                        });
+                    }
+                    return false;
+                }
 
-				if(response.status == 0) {
-					if(response.errors && response.errors.length > 0) {
-						for(var key in response.errors) {
-							var errorContainer = form.find(`.${key}.error`);
-							if(errorContainer.length !== 0) {
-								errorContainer.html(response.errors[key]);
-							}
-						}
-					} else {
-						$.toast({
-							heading: 'Error!',
-							text: response.msg,
-							icon: 'error',
-							afterHidden: function () {
-								form.find('button').prop('disabled', false);
-							}
-						});
-					}
-					return false;
-				}
-
-				var HTML = ``;
-				if(response.query.sent_by == form.data('user')) {
-					HTML = `<div class="media d-block d-sm-flex text-right">
-						<div class="media-body pt-3 pt-sm-0 m-3">
-							<h5 class="mg-b-5 tx-inverse tx-15">
-								<i class="fa fa-calendar"></i> Posted On : ${response.query.query_datetime}
-								<span class="mx-1">|</span>
-								<i class="fa fa-user"></i> By : ${response.query.first_name} ${response.query.last_name}
-							</h5>
-							<p>${response.query.query}</p>
-							<hr class="my-4">
-						</div>
-					</div>`;
-				} else {
-					HTML = `<div class="media d-block d-sm-flex">
-						<div class="media-body pt-3 pt-sm-0 m-3">
-							<h5 class="mg-b-5 tx-inverse tx-15">
-								<i class="fa fa-user"></i> By : ${response.query.first_name} ${response.query.last_name}
-								<span class="mx-1">|</span>
-								<i class="fa fa-calendar"></i> Posted On : ${response.query.query_datetime}
-							</h5>
-							<p>${response.query.query}</p>
-							<hr class="my-4">
-						</div>
-					</div>`;
-				}
-				form.prev().find('.border').append(HTML);
-				
-				$.toast({
-					heading: 'Success!',
-					text: response.msg,
-					icon: 'success',
-					afterHidden: function () {
-						$('#queryForm').each(function() {
+                var HTML = ``;
+                if(response.query.sent_by == form.data('user')) {
+                    HTML = `<div class="media d-block d-sm-flex text-right">
+                        <div class="media-body pt-3 pt-sm-0 m-3">
+                            <h5 class="mg-b-5 tx-inverse tx-15">
+                                <i class="fa fa-calendar"></i> Posted On : ${response.query.query_datetime}
+                                <span class="mx-1">|</span>
+                                <i class="fa fa-user"></i> By : ${response.query.first_name} ${response.query.last_name}
+                            </h5>
+                            <p>${response.query.query}</p>
+                            <hr class="my-4">
+                        </div>
+                    </div>`;
+                } else {
+                    HTML = `<div class="media d-block d-sm-flex">
+                        <div class="media-body pt-3 pt-sm-0 m-3">
+                            <h5 class="mg-b-5 tx-inverse tx-15">
+                                <i class="fa fa-user"></i> By : ${response.query.first_name} ${response.query.last_name}
+                                <span class="mx-1">|</span>
+                                <i class="fa fa-calendar"></i> Posted On : ${response.query.query_datetime}
+                            </h5>
+                            <p>${response.query.query}</p>
+                            <hr class="my-4">
+                        </div>
+                    </div>`;
+                }
+                $('.borderMsg').append(HTML);
+                
+                $.toast({
+                    heading: 'Success!',
+                    text: response.msg,
+                    icon: 'success',
+                    afterHidden: function () {
+                        $('#queryForm').each(function() {
                             this.reset();
                         });
-						form.find('button').prop('disabled', false);
-					}
-				});
-			}
+                        form.find('button').prop('disabled', false);
+                    }
+                });
+            }
 		});
 	});
 
@@ -362,12 +346,21 @@
             dataType: "json",
             data: {
                 indicator_id: indicator_id,
-                user_country: <?php echo $country_id;?>
+                user_country: <?php echo $country_id;?>,
+                csrf_test_name: csrfHash
             },
             error: function() {
                 // setTimeout(function() {
                 //     $('.' + classname).empty();
                 // }, 500);
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
             },
             success: function(response) {
                 if (response.status == 1) {
@@ -447,11 +440,20 @@
 					dataType: "json",
 					data : {
 						// recordid : recordid,
-						record_id : recordid
+						record_id : recordid,
+                        csrf_test_name: csrfHash
 					},
 					error : function(){						
 						$elem.closest('.row').find('.ajax_response').html('<p align="center" class="red-800">Please check your internet connection and try again</p>');
 					},
+                    complete: function(data) {
+                        var csrfData = JSON.parse(data.responseText);
+                        csrfName = csrfData.csrfName;
+                        csrfHash = csrfData.csrfHash;
+                        if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                            $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                        }
+                    },
 					success : function(response){
 						if(response.status == 0){
 							$elem.closest('.row').find('.ajax_response').html('<p align="center" class="red-800" style="font-weight:bold;">'+response.msg+'</p>');
@@ -505,11 +507,20 @@
 					dataType: "json",
 					data : {
 						// recordid : recordid,
-						record_id : recordid
+						record_id : recordid,
+                        csrf_test_name: csrfHash
 					},
 					error : function(){						
 						$elem.closest('.row').find('.ajax_response').html('<p align="center" class="red-800">Please check your internet connection and try again</p>');
 					},
+                    complete: function(data) {
+                        var csrfData = JSON.parse(data.responseText);
+                        csrfName = csrfData.csrfName;
+                        csrfHash = csrfData.csrfHash;
+                        if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                            $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                        }
+                    },
 					success : function(response){
 						if(response.status == 0){
 							$elem.closest('.row').find('.ajax_response').html('<p align="center" class="red-800" style="font-weight:bold;">'+response.msg+'</p>');

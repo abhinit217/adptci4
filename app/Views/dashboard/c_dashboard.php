@@ -27,9 +27,11 @@
 		<div class="row">
 			<?php if(isset($county_id)){ ?>
 				<!-- <iframe src="http://3.16.201.127/atpd/country-admin-atpd/dashboard.html?countryId=<?php echo $country_id;?>&snId=<?php echo $county_id;?>" class="ifdiv" width="100%" height=750px"></iframe> -->
-					<iframe src="http://3.16.201.127/atpd/country-admin-atpd/dashboard.html?countryId=<?php echo $country_id;?>" class="ifdiv" width="100%" height="750px"></iframe>
+					<!-- <iframe src="http://3.16.201.127/atpd/country-admin-atpd/dashboard.html?countryId=<?php echo $country_id;?>" class="ifdiv" width="100%" height="750px"></iframe> -->
+					<iframe src="http://65.0.242.164/tails_dashboard/dashboard.html?countryId=<?php echo $country_id;?>" class="ifdiv" width="100%" height="750px"></iframe>
 			<?php } else{?>
-				<iframe src="http://3.16.201.127/atpd/country-admin-atpd/dashboard.html?countryId=<?php echo $country_id;?>" class="ifdiv" width="100%" height="750px"></iframe>
+				<!-- <iframe src="http://3.16.201.127/atpd/country-admin-atpd/dashboard.html?countryId=<?php echo $country_id;?>" class="ifdiv" width="100%" height="750px"></iframe> -->
+				<iframe src="http://65.0.242.164/tails_dashboard/dashboard.html?countryId=<?php echo $country_id;?>" class="ifdiv" width="100%" height="750px"></iframe>
 			<?php }?>
 			</div>
 		</div>

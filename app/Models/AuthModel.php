@@ -69,7 +69,7 @@ class AuthModel extends Model {
 
         switch ($data['logintype']) {
             case 'simple':
-                $userInfo = $db->query("select user_id as id, first_name, last_name, email_id, role_id from tbl_users where username = '".$data['email_id']."' OR email_id = '".$data['email_id']."' and password = '".$newData['password']."' and approve_status = 1 and status = 1");
+                $userInfo = $db->query("select user_id as id, first_name, last_name, email_id, role_id from tbl_users where (username = '".$data['email_id']."' OR email_id = '".$data['email_id']."') and password = '".$newData['password']."' and approve_status = 1 and status = 1");
             break;
 
             case 'ldap':

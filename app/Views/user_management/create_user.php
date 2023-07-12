@@ -4,12 +4,12 @@
 			<!-- Row -->
 			<div class="row">
 				<div class="col-md-12">
+					<a href="<?php echo base_url(); ?>reporting/user_management/" class="btn btn-sm btn-success pull-right">User list</span></a>
+					<h3 class="font-22px">Create User</h3>
 					<div class="card">
 						<div class="card-body">
 							<div class="row">
-								<div class="col-sm-12">
-									<h3 class="font-22px">Create User</h3>
-								</div>
+
 								<div class="col-sm-4">
 									<div class="form-group">
 										<label class="form-label">First Name <sup class="text-danger"><strong>*</strong></sup></label>
@@ -215,12 +215,12 @@
 </div>
 
 <script type="text/javascript">
-	$(function() {
-		
-		$('[name="country"]').trigger('change');
-		
-    });
-	
+	var csrfName = '<?= csrf_token() ?>';
+    var csrfHash = '<?= csrf_hash() ?>';
+
+	$(function() {		
+		$('[name="country"]').trigger('change');		
+    });	
 
 	$('body').on('change', '.role', function() {
 		role= this.value;
@@ -354,6 +354,7 @@
                     user_name : user_name,
                     password : password,
                     cpassword : cpassword,
+                    csrf_test_name: csrfHash
                 },                
                 error: function() {
                     $('button[type="button"]').prop('disabled', false);
@@ -364,6 +365,14 @@
                         icon: 'error'
                     });
                 },
+                complete: function(data) {
+	                var csrfData = JSON.parse(data.responseText);
+	                csrfName = csrfData.csrfName;
+	                csrfHash = csrfData.csrfHash;
+	                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+	                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+	                }
+	            },
                 success: function(response) {
                     if(response.status == 1) {
                         $.toast({
@@ -406,12 +415,21 @@
             dataType: "json",
             data: {
                 country_id: country_id,
-                role_id: role_id
+                role_id: role_id,
+                csrf_test_name: csrfHash
             },
             error: function() {
                 // setTimeout(function() {
                 //     $('.' + classname).empty();
                 // }, 500);
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
             },
             success: function(response) {
                 if (response.status == 1) {

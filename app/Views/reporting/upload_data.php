@@ -265,7 +265,7 @@
                                                         <div class="col-sm-12 col-md-4 col-lg-8">
                                                             <div class="form-group form-upload col-sm-8">
                                                                 <label for=""> Select Indicator </label>  <span class="ind_desc"></span>
-                                                                <select name="indicator" clas=="indicator" id="searcht2" placeholder="Search ..." >
+                                                                <select name="indicator" class="indicator" id="searcht2" placeholder="Search ..." >
                                                                 </select>
                                                                 <span class="error" style="color:red"></span>
                                                             </div>
@@ -322,14 +322,13 @@
                                                     <div class="row">
                                                         <div class="col-sm-12 col-md-4 col-lg-4">
                                                             <div class="form-group form-upload">
-                                                                <label for="" class="actual_text"> Enter value   </label>
+                                                                <label for="" class="actual_text"> Enter value <font color="red">*</font>  </label>
                                                                 <div class="actual_type" id="actual_type">
                                                                     <input type="number" class="form-control fieldgreen" placeholder="Enter the Actual value " name="actual" id="actual">
+                                                                    <span class="error" style="color:red"></span>
                                                                 </div>
-                                                            <span class="error" style="color:red"></span>
                                                             </div>
-                                                        </div>
-                                                        
+                                                        </div>                                                        
                                                     </div>
                                                 </div>
                                                 
@@ -1197,23 +1196,18 @@
             }
         }
         if ($('input[name="data_sets"]').val().length == 0) {
+            console.log('length');
             $('input[name="data_sets"]').next('.error').html('');
         }else{
-            
-            let filesize = $('input[name="data_sets"]').val().size // On older browsers this can return NULL.
-            let filesizeMB = (filesize / (1024*1024)).toFixed(2);
-
-            if(filesizeMB <= 5) {
-                // Allow the form to be submitted here.
-                $('input[name="data_sets"]').next('.error').html('');
-            } else {
-                // alert("test value greater 5");
-                // Don't allow submission of the form here.
+            var fileUpload = $('input[name="data_sets"]')[0].files[0];
+            if(fileUpload.size > 5242880) {
+                console.log('file issue');
                 $('input[name="data_sets"]').next('.error').html('Uploaded file size should be less than 5 MB :'.filesize);
                 surveycount++;
             }
         }
 
+        console.log(surveycount);
         if (surveycount == 0) {
             var indicatorform = new FormData($('#' + form_id)[0]);
             indicatorform.append('measure_level', $('select[name="measure_level"]').val());

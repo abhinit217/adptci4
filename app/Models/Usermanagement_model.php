@@ -1,11 +1,16 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+namespace App\Models;
+use CodeIgniter\Database\ConnectionInterface;
+use CodeIgniter\Model;
 
-class Usermanagement_model extends CI_Model {
+class Usermanagement_model extends Model {
     
-	public function __construct() {
-		parent::__construct();
-		$this->load->library('session');		
+	function __construct()
+    {		
+		$this->session = \Config\Services::session();
+        $this->db = \Config\Database::connect();
+        $this->uri = new \CodeIgniter\HTTP\URI(current_url());
+        $this->security = \Config\Services::security();	
 	}
 
     //complete pos list with output, indicator, subindicator
@@ -137,10 +142,8 @@ class Usermanagement_model extends CI_Model {
     }
 
     public function get_county_name_byID($county_id){
-		$this->db->select('county_name');
-		$this->db->where('county_status', 1);
-		$this->db->where('county_id', $county_id);
-		$county_name = $this->db->get('lkp_county')->row_array();
+        $county_name = $this->db->query("select county_name from lkp_county where county_status = 1 and county_id = '".$county_id."' ")->getRowArray();
+
 		return $county_name['county_name'];
 	}
 

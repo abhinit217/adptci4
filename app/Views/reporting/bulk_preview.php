@@ -1,5 +1,3 @@
-
-
 <div class="wrapper mt-8">
     <div class="container-fluid">
         <div class="card border-0 shadow">
@@ -62,14 +60,11 @@
                                                     }
                                                 }else{
                                                     $selected="";
-                                                    if($country== $option['country_id']){
+                                                    if($country == $option['country_id'] or $key == 0){
                                                         $selected="selected";
-                                                    }
-                                                    ?>
+                                                    } ?>
                                                     <option value = "<?php echo $option['country_id']; ?>" <?php echo $selected;?>><?php echo $option['country_name']; ?></option> 
-                                                    <?php
-                                                }
-
+                                                <?php }
                                             } ?>
                                         </select>
                                         <span class="error" style="color:red"></span>
@@ -112,7 +107,7 @@
                         <div class="col-sm-12 col-md-12 col-lg-12">
                             <div class="table-responsive">
                                 <?php 
-                                if($measure_level_id ==0 && $year ==0 && $country==0 ){
+                                if($measure_level_id == 0 && $year == 0 && $country == 0 ){
                                     ?>
                                     <div>Please select Measurement level, Year , Country </div>                                
                                     <?php                                     
@@ -434,7 +429,7 @@
         $elem = $(this);
         country_id= this.value;
         measure_level= $('select[name="measure_level"]').val();
-        if(measure_level!=1){
+        if(measure_level != 1){
             role_id= <?php echo $lkp_user_list['role_id']; ?>;
             $.ajax({
                 url: "<?php echo base_url(); ?>reporting/get_countys",
@@ -486,27 +481,27 @@
         year= $('select[name="year"]').val();
         country= $('select[name="country"]').val();
         county= $('select[name="county"]').val();
-        window.location = "<?php echo base_url(); ?>Reporting/bulk_preview/"+measure_level+"/"+year+"/"+country+"/"+county;
-
+        window.location = "<?php echo base_url(); ?>reporting/bulk_preview/"+measure_level+"/"+year+"/"+country+"/"+county;
     });
+
     $('body').on('change', '.year', function() {
         $elem = $(this);
         measure_level= $('select[name="measure_level"]').val();
         year= this.value;
         country= $('select[name="country"]').val();
         county= $('select[name="county"]').val();
-        window.location = "<?php echo base_url(); ?>Reporting/bulk_preview/"+measure_level+"/"+year+"/"+country+"/"+county;
-
+        window.location = "<?php echo base_url(); ?>reporting/bulk_preview/"+measure_level+"/"+year+"/"+country+"/"+county;
     });
+
     $('body').on('change', '.county', function() {
         $elem = $(this);
         measure_level= $('select[name="measure_level"]').val();
         year= $('select[name="year"]').val();
         country= $('select[name="country"]').val();
         county= this.value;
-        window.location = "<?php echo base_url(); ?>Reporting/bulk_preview/"+measure_level+"/"+year+"/"+country+"/"+county;
-
+        window.location = "<?php echo base_url(); ?>reporting/bulk_preview/"+measure_level+"/"+year+"/"+country+"/"+county;
     });
+
     $('body').on('click', '.submit_data', function() {
         $elem = $(this);
         $elem.prop('disabled', true);
@@ -568,13 +563,11 @@
                             surveycount++;
                             
                         }
-                        if($.trim($(this).val()) > maxvalue){   
-                            alert(maxvalue);                 
+                        if($.trim($(this).val()) > maxvalue){
                             $(this).closest('.form-group').find('.error').html('Please! Enter below '+maxvalue+' value');
                             surveycount++;
                         }
                         if($.trim($(this).val()) < minvalue){
-                            alert(minvalue);
                             $(this).closest('.form-group').find('.error').html('Please! Enter above '+minvalue+' value');
                             surveycount++;
                         }
@@ -590,13 +583,11 @@
                             $(this).closest('.form-group').find('.error').html('Field can contain only proper decimal number.');
                             surveycount++;
                         }
-                        if($.trim($(this).val()) > maxvalue){   
-                            alert(maxvalue);                 
+                        if($.trim($(this).val()) > maxvalue){
                             $(this).closest('.form-group').find('.error').html('Please! Enter below '+maxvalue+' value');
                             surveycount++;
                         }
                         if($.trim($(this).val()) < minvalue){
-                            alert(minvalue);
                             $(this).closest('.form-group').find('.error').html('Please! Enter above '+minvalue+' value');
                             surveycount++;
                         }
@@ -604,9 +595,6 @@
                     break;
                 }
             }
-
-                // alert($.trim($(this).val()));
-
         });
         
         

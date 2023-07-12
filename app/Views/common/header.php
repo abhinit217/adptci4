@@ -888,22 +888,18 @@
                             </ul>
                         </li>
                         <?php if ($this->session->get('role') !=  5){?>                            
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo base_url(); ?>reporting/view_data">Validate Data</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo base_url(); ?>reporting/user_management"> User Management</a>
-                        </li>
-                        <?php
-                        }
-                        ?>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo base_url(); ?>reporting/view_data">Validate Data</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo base_url(); ?>reporting/user_management"> User Management</a>
+                            </li>
+                        <?php } ?>
                         <?php if ($this->session->get('role') !=  6){?>                            
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?php echo base_url(); ?>reporting/view_data_user">Validate Data</a>
-                        </li>
-                        <?php
-                        }
-                        ?>
+                            <!-- <li class="nav-item">
+                                <a class="nav-link" href="<?php echo base_url(); ?>reporting/view_data_user">Validate Data</a>
+                            </li> -->
+                        <?php } ?>
                         <!-- <?php if ($this->session->get('role') ==  5 || $this->session->get('role') ==  6){?>
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo base_url(); ?>dashboard/approval">Approval</a>

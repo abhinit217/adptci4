@@ -1,10 +1,10 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Compress_model extends CI_Model {
-	public function __construct() {
-		parent::__construct();		
-	}
+namespace App\Models;
+use CodeIgniter\Database\ConnectionInterface;
+use CodeIgniter\Model;
+
+class Compress_model extends Model {
 
 	//Image Compression
 	//New Upload using Compression

@@ -42,6 +42,7 @@
                                 </div>
                                 <div class="card-body p-3">
                                     <form id="submit_data">
+                                        <input type="hidden" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" />
                                         <div class="form">
                                             <div class="row">
                                                 <div class="col-sm-12 col-md-4 col-lg-4">

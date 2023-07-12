@@ -55,7 +55,7 @@
                                         </div>
                                         <input type="hidden" class="txt_csrfname" name="<?= csrf_token() ?>" value="<?= csrf_hash() ?>" />
                                         <div class="">
-                                            <a href="<?php echo base_url(); ?>user_management/create_user/" class="btn btn-sm btn-success" target="_blank">Register</span></a>
+                                            <a href="<?php echo base_url(); ?>user_management/create_user/" class="btn btn-sm btn-success">Register</span></a>
                                         </div>
                                     </div>
                                 </div>
@@ -164,6 +164,9 @@
 </div>
 
 <script type="text/javascript">
+
+    var csrfName = '<?= csrf_token() ?>';
+    var csrfHash = '<?= csrf_hash() ?>';
     
     $('body').on('click', '#userdetails', function(){
         $elem = $(this);
@@ -180,6 +183,8 @@
             },
             complete: function(data) {
                 var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
                 if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
                     $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
                 }
@@ -245,11 +250,20 @@
 					type: "POST",
 					dataType: "json",
 					data : {
-						user_id : recordid
+						user_id : recordid,
+                        csrf_test_name: csrfHash
 					},
 					error : function(){						
 						$elem.closest('.row').find('.ajax_response').html('<p align="center" class="red-800">Please check your internet connection and try again</p>');
 					},
+                    complete: function(data) {
+                        var csrfData = JSON.parse(data.responseText);
+                        csrfName = csrfData.csrfName;
+                        csrfHash = csrfData.csrfHash;
+                        if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                            $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                        }
+                    },
 					success : function(response){
 						if(response.status == 0){
 							$elem.closest('.row').find('.ajax_response').html('<p align="center" class="red-800" style="font-weight:bold;">'+response.msg+'</p>');

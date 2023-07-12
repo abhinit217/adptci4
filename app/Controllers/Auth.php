@@ -1,9 +1,19 @@
 <?php
+
 namespace App\Controllers;
 use CodeIgniter\Controller;
 use App\Models\AuthModel;
 
 class Auth extends Controller {
+
+	function __construct()
+	{
+		$this->session = \Config\Services::session();
+		$this->db = \Config\Database::connect();
+		$this->uri = new \CodeIgniter\HTTP\URI(current_url());
+		$this->security = \Config\Services::security();
+		$this->baseurl = base_url();
+	}
 
 	public function index()
 	{
@@ -77,8 +87,8 @@ class Auth extends Controller {
 			}
 		} else {
 			return $this->response->setJSON(array(
-				'csrfName' => $this->security->get_csrf_token_name(),
-				'csrfHash' => $this->security->get_csrf_hash(),
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 				'form' => 'Invalid login credentials or Admin not approved Login',
 				'status' => 0
 			));

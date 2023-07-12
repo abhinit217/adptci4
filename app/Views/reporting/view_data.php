@@ -194,6 +194,9 @@
 <script src="<?php echo base_url(); ?>include/assets/plugins/sisyphus/sisyphus.min.js"></script>
 <script src="<?php echo base_url(); ?>include/assets/plugins/wysiwyag/jquery.richtext.js"></script>
 <script type="text/javascript">
+
+    var csrfName = '<?= csrf_token() ?>';
+    var csrfHash = '<?= csrf_hash() ?>';
     
     $(function() {
         // Initialize Sisyphus
@@ -226,7 +229,16 @@
             type: "POST",
             dataType: "json",
             data: {
-                country_id: country_id
+                country_id: country_id,
+                csrf_test_name: csrfHash
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
             },
             error: function() {
                 // setTimeout(function() {
@@ -259,7 +271,16 @@
             type: "POST",
             dataType: "json",
             data: {
-                dimensions_id: dimensions_id
+                dimensions_id: dimensions_id,
+                csrf_test_name: csrfHash
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
             },
             error: function() {
                 // setTimeout(function() {
@@ -290,6 +311,7 @@
             }
         });
     });
+
     $('body').on('change', '.subdimension', function() {
         $elem = $(this);
         sub_dimensions_id= this.value;
@@ -298,7 +320,16 @@
             type: "POST",
             dataType: "json",
             data: {
-                sub_dimensions_id: sub_dimensions_id
+                sub_dimensions_id: sub_dimensions_id,
+                csrf_test_name: csrfHash
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
             },
             error: function() {
                 // setTimeout(function() {
@@ -335,7 +366,16 @@
             type: "POST",
             dataType: "json",
             data: {
-                category_id: category_id
+                category_id: category_id,
+                csrf_test_name: csrfHash
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
             },
             error: function() {
                 // setTimeout(function() {
@@ -370,7 +410,16 @@
             dataType: "json",
             data: {
                 indicator_id: indicator_id,
-                user_country: <?php echo $country_id;?>
+                user_country: <?php echo $country_id;?>,
+                csrf_test_name: csrfHash
+            },
+            complete: function(data) {
+                var csrfData = JSON.parse(data.responseText);
+                csrfName = csrfData.csrfName;
+                csrfHash = csrfData.csrfHash;
+                if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                    $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                }
             },
             error: function() {
                 // setTimeout(function() {
@@ -455,8 +504,17 @@
 					dataType: "json",
 					data : {
 						// recordid : recordid,
-						record_id : recordid
+						record_id : recordid,
+                        csrf_test_name: csrfHash
 					},
+                    complete: function(data) {
+                        var csrfData = JSON.parse(data.responseText);
+                        csrfName = csrfData.csrfName;
+                        csrfHash = csrfData.csrfHash;
+                        if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                            $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                        }
+                    },
 					error : function(){						
 						$elem.closest('.row').find('.ajax_response').html('<p align="center" class="red-800">Please check your internet connection and try again</p>');
 					},
@@ -513,8 +571,17 @@
 					dataType: "json",
 					data : {
 						// recordid : recordid,
-						record_id : recordid
+						record_id : recordid,
+                        csrf_test_name: csrfHash
 					},
+                    complete: function(data) {
+                        var csrfData = JSON.parse(data.responseText);
+                        csrfName = csrfData.csrfName;
+                        csrfHash = csrfData.csrfHash;
+                        if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                            $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                        }
+                    },
 					error : function(){						
 						$elem.closest('.row').find('.ajax_response').html('<p align="center" class="red-800">Please check your internet connection and try again</p>');
 					},

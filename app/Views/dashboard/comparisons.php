@@ -25,7 +25,8 @@
 			</div>
 		</div> -->
 		<div class="row">
-				<iframe src="http://3.16.201.127/atpd/country-admin-atpd/comparison.html?countryId=<?php echo $country_id;?>" class="ifdiv" width="100%" height="650px"></iframe>
+				<!-- <iframe src="http://3.16.201.127/atpd/country-admin-atpd/comparison.html?countryId=<?php echo $country_id;?>" class="ifdiv" width="100%" height="650px"></iframe> -->
+				<iframe src="http://65.0.242.164/tails_dashboard/comparison.html?countryId=<?php echo $country_id;?>" class="ifdiv" width="100%" height="650px"></iframe>
 			</div>
 		</div>
 	</div><!-- end app-content-->

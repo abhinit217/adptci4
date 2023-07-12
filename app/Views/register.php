@@ -237,155 +237,149 @@
                                                     <a class="nav-item nav-link p-3 text-dark active"  href="<?php echo base_url(); ?>login/register" >Register</a>
                                             </div>
                                         </nav>
-                                        <form action="#" id="scroll_style"
-                                        class="form-horizontal form-simple mt-3" method="post"
-                                        accept-charset="utf-8">
+                                        <form action="#" id="scroll_style" class="form-horizontal form-simple mt-3" method="post" accept-charset="utf-8">
+                                             <?= csrf_field() ?>
+                                            <div class="row">
+                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="">First Name <sup
+                                                                class="text-danger"><strong>*</strong></sup></label>
+                                                        <input type="text" class="form-control" id="first_name"
+                                                            placeholder="First Name" name="first_name" value="">
+                                                        <p class="error red-800"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="">Last Name <sup
+                                                                class="text-danger"><strong>*</strong></sup></label>
+                                                        <input type="text" class="form-control" id="last_name"
+                                                            placeholder="Last Name" name="last_name" value="">
+                                                        <p class="error red-800"></p>
+                                                    </div>
+                                                </div>
 
-                                        <div class="row">
-                                            <div class="col-sm-12 col-md-6 col-lg-6">
-                                                <div class="form-group">
-                                                    <label for="">First Name <sup
-                                                            class="text-danger"><strong>*</strong></sup></label>
-                                                    <input type="text" class="form-control" id="first_name"
-                                                        placeholder="First Name" name="first_name" value="">
-                                                    <p class="error red-800"></p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 col-lg-6">
-                                                <div class="form-group">
-                                                    <label for="">Last Name <sup
-                                                            class="text-danger"><strong>*</strong></sup></label>
-                                                    <input type="text" class="form-control" id="last_name"
-                                                        placeholder="Last Name" name="last_name" value="">
-                                                    <p class="error red-800"></p>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-sm-12 col-md-6 col-lg-6">
-                                                <div class="form-group">
-                                                    <label for="">Select Role <sup
-                                                            class="text-danger"><strong>*</strong></sup></label>
-                                                    <select type="text" class="form-control " id="role"
-                                                        placeholder="Email" name="role" value="">
-                                                        <option value="">Select Role</option>
-                                                        <option value="6">Country Admin</option>
-                                                        <option value="5">County / Zone / District Admin</option>
-                                                    </select>
-                                                    <p class="error red-800"></p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 col-lg-6">
-                                                <div class="form-group">
-                                                    <label for="">Email Address <sup
-                                                            class="text-danger"><strong>*</strong></sup></label>
-                                                    <input type="text" class="form-control" id="emailid"
-                                                        placeholder="Email" name="emailid" value="">
-                                                    <p class="error red-800"></p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-12 col-lg-12">
-                                                <div class="form-group">
-                                                    <label for="">User Name <sup
-                                                            class="text-danger"><strong>*</strong></sup></label>
-                                                    <input type="text" class="form-control" id="user_name"
-                                                        placeholder="User Name" name="user_name" value="">
-                                                    <p class="error red-800"></p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 col-lg-6">
-                                                <div class="form-group">
-                                                    <label for="">Password <sup
-                                                            class="text-danger"><strong>*</strong></sup></label>
-                                                    <input type="Password" class="form-control" id="password1"
-                                                        placeholder="Password" name="password1" value="">
-                                                    <p class="error red-800"></p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 col-lg-6">
-                                                <div class="form-group">
-                                                    <label for="">Confirm Password <sup
-                                                            class="text-danger"><strong>*</strong></sup></label>
-                                                    <input type="Password" class="form-control" id="cpassword"
-                                                        placeholder="Confirm Password" name="cpassword" value="">
-                                                    <p class="error red-800"></p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 col-lg-6">
-                                                <div class="form-group country_div" id="country_div">
-                                                    <label for="">Country <sup
-                                                            class="text-danger"><strong>*</strong></sup></label>
-                                                    <select class="form-control country" name="country">
-                                                        <option value="">Select Country</option>
-                                                        <option value="1">Kenya</option>
-                                                        <option value="2">Uganda</option>
-                                                        <option value="3">Ethiopia</option>
-                                                    </select>
-                                                    <p class="error red-800"></p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 col-lg-6">
-                                                <div class="form-group county_div" id="county_div">
-                                                    <label for="">County / Zone / District <sup class="text-danger"><strong>*</strong></sup></label>
-                                                        <select class="form-control county" name="county">
-                                                            <option selected value="">Select County / Zone / District</option>
+                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="">Select Role <sup
+                                                                class="text-danger"><strong>*</strong></sup></label>
+                                                        <select type="text" class="form-control " id="role"
+                                                            placeholder="Email" name="role" value="">
+                                                            <option value="">Select Role</option>
+                                                            <option value="6">Country Admin</option>
+                                                            <option value="5">County / Zone / District Admin</option>
                                                         </select>
                                                         <p class="error red-800"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="">Email Address <sup
+                                                                class="text-danger"><strong>*</strong></sup></label>
+                                                        <input type="text" class="form-control" id="emailid"
+                                                            placeholder="Email" name="emailid" value="">
+                                                        <p class="error red-800"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                    <div class="form-group">
+                                                        <label for="">User Name <sup
+                                                                class="text-danger"><strong>*</strong></sup></label>
+                                                        <input type="text" class="form-control" id="user_name"
+                                                            placeholder="User Name" name="user_name" value="">
+                                                        <p class="error red-800"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="">Password <sup
+                                                                class="text-danger"><strong>*</strong></sup></label>
+                                                        <input type="Password" class="form-control" id="password1"
+                                                            placeholder="Password" name="password1" value="">
+                                                        <p class="error red-800"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="">Confirm Password <sup
+                                                                class="text-danger"><strong>*</strong></sup></label>
+                                                        <input type="Password" class="form-control" id="cpassword"
+                                                            placeholder="Confirm Password" name="cpassword" value="">
+                                                        <p class="error red-800"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                    <div class="form-group country_div" id="country_div">
+                                                        <label for="">Country <sup
+                                                                class="text-danger"><strong>*</strong></sup></label>
+                                                        <select class="form-control country" name="country">
+                                                            <option value="">Select Country</option>
+                                                            <option value="1">Kenya</option>
+                                                            <option value="2">Uganda</option>
+                                                            <option value="3">Ethiopia</option>
+                                                        </select>
+                                                        <p class="error red-800"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                    <div class="form-group county_div" id="county_div">
+                                                        <label for="">County / Zone / District <sup class="text-danger"><strong>*</strong></sup></label>
+                                                            <select class="form-control county" name="county">
+                                                                <option selected value="">Select County / Zone / District</option>
+                                                            </select>
+                                                            <p class="error red-800"></p>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="">Mobile No <sup
+                                                                class="text-danger"><strong>*</strong></sup></label>
+                                                        <input type="text" class="form-control" id="mobile_number"
+                                                            placeholder="Mobile Number" name="mobile_number" value="">
+                                                        <p class="error red-800"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="">Organization <sup
+                                                                class="text-danger"><strong>*</strong></sup></label>
+                                                        <input type="text" class="form-control" id="organization"
+                                                            placeholder="Organization" name="organization" value="">
+                                                        <p class="error red-800"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                    <div class="form-group">
+                                                        <label for="">Role in the organization <sup
+                                                                class="text-danger"><strong>*</strong></sup></label>
+                                                        <input type="text" class="form-control" id="organization_role"
+                                                            placeholder="organization Role" name="organization_role"
+                                                            value="">
+                                                        <p class="error red-800"></p>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                    <div class="form-group">
+                                                        <label for="comment">Reason for dashboard request <sup
+                                                                class="text-danger"><strong>*</strong></sup></label>
+                                                        <textarea class="form-control" rows="3" id="reason"
+                                                            name="reason"></textarea>
+                                                        <p class="error red-800"></p>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            
-                                            <div class="col-sm-12 col-md-6 col-lg-6">
-                                                <div class="form-group">
-                                                    <label for="">Mobile No <sup
-                                                            class="text-danger"><strong>*</strong></sup></label>
-                                                    <input type="text" class="form-control" id="mobile_number"
-                                                        placeholder="Mobile Number" name="mobile_number" value="">
-                                                    <p class="error red-800"></p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 col-lg-6">
-                                                <div class="form-group">
-                                                    <label for="">Organization <sup
-                                                            class="text-danger"><strong>*</strong></sup></label>
-                                                    <input type="text" class="form-control" id="organization"
-                                                        placeholder="Organization" name="organization" value="">
-                                                    <p class="error red-800"></p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-6 col-lg-6">
-                                                <div class="form-group">
-                                                    <label for="">Role in the organization <sup
-                                                            class="text-danger"><strong>*</strong></sup></label>
-                                                    <input type="text" class="form-control" id="organization_role"
-                                                        placeholder="organization Role" name="organization_role"
-                                                        value="">
-                                                    <p class="error red-800"></p>
-                                                </div>
-                                            </div>
-                                            <div class="col-sm-12 col-md-12 col-lg-12">
-                                                <div class="form-group">
-                                                    <label for="comment">Reason for dashboard request <sup
-                                                            class="text-danger"><strong>*</strong></sup></label>
-                                                    <textarea class="form-control" rows="3" id="reason"
-                                                        name="reason"></textarea>
-                                                    <p class="error red-800"></p>
-                                                </div>
-                                            </div>
-                                        </div>
 
-                                        <div class="row">
-                                            <div class="col-sm-12 colmd-12 col-lg-12 text-center">
-                                                <div class="my-3 m-auto">
-                                                    <!-- <button type="submit" id="ldap" class="btn btn-size btn-success py-2 px-4 btn-block add_user">Register</button> -->
-                                                    <button class="btn btn-success  add_user"
-                                                        type="button">Register</button>
+                                            <div class="row">
+                                                <div class="col-sm-12 colmd-12 col-lg-12 text-center">
+                                                    <div class="my-3 m-auto">
+                                                        <!-- <button type="submit" id="ldap" class="btn btn-size btn-success py-2 px-4 btn-block add_user">Register</button> -->
+                                                        <button class="btn btn-success  add_user"
+                                                            type="button">Register</button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </form>
-                                    <!-- <div class="scrollDownClick">
-                                        <i class="fa fa-angle-double-down" id="downArrowScroll"></i>
-                                    </div> -->
-
+                                        </form>
                                         <small class="font-italic p-3" for="exampleCheck2"
                                             style="padding-top:0 !important;text-align:justify;font-weight:500;color:#797979;">
                                             Note: For complete experience of the platform please use one of the
@@ -394,7 +388,6 @@
                                         </small>
                                     </div>
                                 </div>
-
                             </div>
                             <div class="row text-center">
                                 <div class="col-sm-12 mt-3">
@@ -404,14 +397,15 @@
                         </div>
                         <div class="col-sm-12 col-md-1 col-lg-1"> </div>
                     </div>
-
                 </div>
-            </div>
-            
+            </div>            
         </div>
     </section>
 
     <script type="text/javascript">
+
+        var csrfName = '<?= csrf_token() ?>';
+        var csrfHash = '<?= csrf_hash() ?>';
 
         $(function(){
             $(".scrollDownClick").click(function (event) {
@@ -475,6 +469,7 @@
 
         $('#role').on('change', function() {
             role= this.value;
+            console.log(role);
             if(role==6){
                 $('.county_div').hide();
             }else{
@@ -491,12 +486,21 @@
                 type: "POST",
                 dataType: "json",
                 data: {
-                    country_id: country_id
+                    country_id: country_id,
+                    csrf_test_name: csrfHash
                 },
                 error: function() {
                     // setTimeout(function() {
                     //     $('.' + classname).empty();
                     // }, 500);
+                },
+                complete: function(data) {
+                    var csrfData = JSON.parse(data.responseText);
+                    csrfName = csrfData.csrfName;
+                    csrfHash = csrfData.csrfHash;
+                    if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                        $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                    }
                 },
                 success: function(response) {
                     if (response.status == 1) {
@@ -650,6 +654,7 @@
                         user_name : user_name,
                         password : password,
                         cpassword : cpassword,
+                        csrf_test_name: csrfHash
                     },                
                     error: function() {
                         $('button[type="button"]').prop('disabled', false);
@@ -659,6 +664,14 @@
                             text: 'Could not establish connection to server. Please refresh the page and try again.',
                             icon: 'error'
                         });
+                    },
+                    complete: function(data) {
+                        var csrfData = JSON.parse(data.responseText);
+                        csrfName = csrfData.csrfName;
+                        csrfHash = csrfData.csrfHash;
+                        if(csrfData.csrfName && $('input[name="' + csrfData.csrfName + '"]').length > 0) {
+                            $('input[name="' + csrfData.csrfName + '"]').val(csrfData.csrfHash);
+                        }
                     },
                     success: function(response) {
                         if(response.status == 1) {

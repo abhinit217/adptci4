@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 use CodeIgniter\Controller;
+use App\Models\Usermanagement_model;
 
 class User_management extends \CodeIgniter\Controller {
 	
@@ -9,6 +10,7 @@ class User_management extends \CodeIgniter\Controller {
 		$this->session = \Config\Services::session();
 		$this->db = \Config\Database::connect();
 		$this->uri = new \CodeIgniter\HTTP\URI(current_url());
+		$this->security = \Config\Services::security();
 
 		$result['lkp_user_list'] = $this->db->query("select * from tbl_users where status = 1 and user_id = '".$this->session->get('login_id')."'")->getRow();
 		if(isset($result['lkp_user_list'])){
@@ -20,7 +22,7 @@ class User_management extends \CodeIgniter\Controller {
 
 	public function create_user(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$subquery="";
@@ -46,25 +48,22 @@ class User_management extends \CodeIgniter\Controller {
 	}
 
 	public function get_countys(){
-		/*$this->db->select('*');
-		$this->db->where('county_status', 1);
-		$this->db->where('country_id', $country_id);
-		$this->db->order_by('county_name');
-		$result['lkp_county_list'] = $this->db->get('lkp_county')->result_array();*/
 
-		$model = new \App\Models\LkpCountyModel;
-		$result['lkp_county_list'] = $model->findAll();
+		$country_id = $this->request->getVar('country_id');
 
-		echo json_encode(array(
+		$result['lkp_county_list'] = $this->db->query("select * from lkp_county where county_status = 1 and country_id = '".$country_id."' order by county_name ")->getResultArray();
+
+		return $this->response->setJSON(array(
+			'csrfName' => $this->security->getCSRFTokenName(),
+			'csrfHash' => $this->security->getCSRFHash(),
 			'status' => 1,
 			'result' => $result
 		));
-		exit();
 	}
 
 	public function manage_user(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$this->db->select('*');
@@ -74,51 +73,53 @@ class User_management extends \CodeIgniter\Controller {
 		$result = array(
 			'year_list' => $year_list
 		);
-		return view('common/header');
-		return view('user_management/manage_user', $result);
-		return view('common/footer');
+		return view('common/header')
+			.view('user_management/manage_user', $result)
+			.view('common/footer');
 	}
 
 	public function insert_user(){
-		echo 'Hai';
-		die();
+		/*if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
+			echo json_encode(array(
+				'msg' => 'Session expired please refresh the to login.',
+				'status' => 0,
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
+			));
+			exit();
+		}*/
 
-		// if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-		// 	echo json_encode(array(
-		// 		'msg' => 'Session expired please refresh the to login.',
-		// 		'status' => 0
-		// 	));
-		// 	exit();
-		// }
-
-		/*date_default_timezone_set('UTC');
+		date_default_timezone_set('UTC');
 		$baseurl = base_url();
 
-		$check_email = $this->db->select('user_id')->where('email_id', $this->input->post('emailid'))->where('status', 1)->get('tbl_users')->num_rows();
-		$check_username = $this->db->select('user_id')->where('username', $this->input->post('user_name'))->where('status', 1)->get('tbl_users')->num_rows();
+		$check_email = $this->db->query("select * from tbl_users where email_id = '".$this->request->getVar('emailid')."' and status = 1 ")->getRowArray();
 
-		if($check_email != 0 || $check_username != 0){
+		$check_username = $this->db->query("select * from tbl_users where username = '".$this->request->getVar('user_name')."' and status = 1 ")->getRowArray();
+
+		if(!empty($check_email) || !empty($check_username)){
 			echo json_encode(array(
 				'msg' => 'Either email or username is already in use.',
-				'status' => 0
+				'status' => 0,
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
-			$this->session->set_flashdata('success', "Either email or username is already in use.");
+			$this->session->setFlashdata('success', "Either email or username is already in use.");
 			exit();
 		}
 
-		$first_name = $this->input->post('first_name');
-        $last_name = $this->input->post('last_name');
-        // $role = $this->input->post('role');
-        $email_id = $this->input->post('emailid');
-        $username = $this->input->post('user_name');
-        $password = $this->input->post('password');
-        $mobile_number = $this->input->post('mobile_number');
-        $user_type = $this->input->post('user_type');
-        $country_id = $this->input->post('country');
-        $county_id = $this->input->post('county');
-        $organization = $this->input->post('organization');
-        $organization_role = $this->input->post('organization_role');
-        $reason = $this->input->post('reason');
+		$first_name = $this->request->getVar('first_name');
+        $last_name = $this->request->getVar('last_name');
+        // $role = $this->request->getVar('role');
+        $email_id = $this->request->getVar('emailid');
+        $username = $this->request->getVar('user_name');
+        $password = $this->request->getVar('password');
+        $mobile_number = $this->request->getVar('mobile_number');
+        $user_type = $this->request->getVar('user_type');
+        $country_id = $this->request->getVar('country');
+        $county_id = $this->request->getVar('county');
+        $organization = $this->request->getVar('organization');
+        $organization_role = $this->request->getVar('organization_role');
+        $reason = $this->request->getVar('reason');
 		$salt = bin2hex(random_bytes(32));
 		$saltedPW =  $password . $salt;
 		$hashedPW = hash('sha256', $saltedPW);
@@ -141,25 +142,29 @@ class User_management extends \CodeIgniter\Controller {
         	'forgot_pass' => NULL,
         	'added_by' => NULL,
         	'added_datetime' => date('Y-m-d H:i:s'),
-        	'ip_address' => $this->input->ip_address(),
+        	'ip_address' => $this->request->getIPAddress(),
         	'status' => 1
         );
 		$query =1;
-        $query = $this->db->insert('tbl_users', $user_array);
-		
+
+		$builder = $this->db->table('tbl_users');
+		$query = $builder->insert($user_array);		
 		if(!$query) {
-			echo json_encode(array(
+			return $this->response->setJSON(array(
 				'msg' => 'Something went wrong please refresh the page and try again.',
-				'status' => 0
+				'status' => 0,
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 		} else{
+			$userManagementModel = new Usermanagement_model();
 			if($user_type == 5){
 				$user_role="County Admin";
 				$user_details = array(
 					// 'created_by' => $this->session->get('name'),
 					'name' =>$first_name.' '.$last_name,
 					'user_role' => $user_role,
-					'county_name' => $this->Usermanagement_model->get_county_name_byID($county_id),
+					'county_name' => $userManagementModel->get_county_name_byID($county_id),
 				);
 			}else if($user_type == 6){
 				$user_role="Country Admin";
@@ -171,12 +176,14 @@ class User_management extends \CodeIgniter\Controller {
 			}
 			
 			$this->send_mail($user_details);
-			echo json_encode(array(
+			return $this->response->setJSON(array(
 				'msg' => 'User added Successfully.',
-				'status' => 1
+				'status' => 1,
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
 			));
 		}
-		exit();*/
+		exit();
 	}
 
 	public function send_mail($userdetails){
@@ -190,14 +197,17 @@ class User_management extends \CodeIgniter\Controller {
 			'charset' => 'iso-8859-1',
 			'wordwrap' => TRUE
 		);
-		$this->load->library('email', $config);
-		$this->email->set_newline("\r\n");
-		$this->email->from('amrtapplications@gmail.com','Tails ADPT');
+
+		$email = \Config\Services::email($config);
+
+		//$this->load->library('email', $config);
+		$email->setNewLine("\r\n");
+		$email->setFrom('amrtapplications@gmail.com','Tails ADPT');
 		// $this->email->to('praveen@unmiti.com');
 		// $this->email->to('ggunasagar@gmail.com');
-		$this->email->to('l.njuguna@cgiar.org');
-		$this->email->subject('New User account creation alert');
-		$this->email->set_mailtype("html");
+		$email->setTo('l.njuguna@cgiar.org');
+		$email->setSubject('New User account creation alert');
+		$email->setMailType("html");
 		// $body = 'test';
 		$name = $userdetails['name'];
 		$user_role = $userdetails['user_role'];
@@ -208,33 +218,43 @@ class User_management extends \CodeIgniter\Controller {
 		}else{
 			$body ="Dear Admin,<br> New Account created <br/> <b>Account Details</b> : <br> User Name : ".$name."<br>Role : ".$user_role."<br/> <a href='http://3.108.47.178/Login/' >Please click here to login and approve</a>";
 		}
-		$this->email->message($body);
-		if($this->email->send()) {
-			$result = array('msg' => 'Message sent successfully', 'status' => 1);
-			echo json_encode($result);
+		$email->setMessage($body);
+		if($email->send()) {
+			$result = array(
+				'msg' => 'Message sent successfully',
+				'status' => 1,
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
+			);
+			return $this->response->setJSON($result);
 			exit();
 		}
 		else {
-			$result = array('msg' => 'Please try after some time', 'status' => 0);
-			echo json_encode($result);
+			$result = array(
+				'msg' => 'Please try after some time',
+				'status' => 0,
+				'csrfName' => $this->security->getCSRFTokenName(),
+				'csrfHash' => $this->security->getCSRFHash(),
+			);
+			return $this->response->setJSON($result);
 			exit();
 		}
 	}
 
 	public function approve_user(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 		$result = array();
 		$time = time();
 		$tablename="tbl_users";
-		$user_id = $this->input->post('user_id');
+		$user_id = $this->request->getVar('user_id');
 		$insert_array =array();
 		$insert_array['approve_status']=1;
-		// print_r($user_id);exit();
 
-		$query = $this->db->where('user_id', $user_id)->update($tablename, $insert_array);
-		// print_r($this->db->last_query());exit();
+		$builder = $this->db->table($tablename);
+		$builder->where('user_id', $user_id);
+		$query = $builder->update($insert_array);
 		if($query){
 			echo json_encode(array(
 				'status' => 1,
@@ -281,15 +301,15 @@ class User_management extends \CodeIgniter\Controller {
 			exit();
 		}
 
-		$year = $this->input->post('year_val');
+		$year = $this->request->getVar('year_val');
 
 		$program_list = $this->Usermanagement_model->program_list($year);
 
 		$result = array('program_list' => $program_list, 'status' => 1);
 
 		if(isset($_POST['search_user'])){
-			$user_id = $this->input->post('search_user');
-			$type = $this->input->post('type');
+			$user_id = $this->request->getVar('search_user');
+			$type = $this->request->getVar('type');
 
 			if($type == 'approval'){
 				$table_name = "tbl_user_approval_indicator";
@@ -347,13 +367,13 @@ class User_management extends \CodeIgniter\Controller {
 			exit();
 		}
 
-		$year = $this->input->post('year');
+		$year = $this->request->getVar('year');
 		// Get default po, output, indicator list
 		$po_list = $this->Usermanagement_model->po_list($year);
 		
 		$result = array('po_list' => $po_list, 'status' => 1);
 		if(isset($_POST['search_user'])){
-			$user_id = $this->input->post('search_user');
+			$user_id = $this->request->getVar('search_user');
 
 			// Get pos assigned to user
 			$this->db->select('GROUP_CONCAT(po_id) as pos');
@@ -406,7 +426,7 @@ class User_management extends \CodeIgniter\Controller {
 			exit();
 		}
 
-		$year = $this->input->post('year_val');
+		$year = $this->request->getVar('year_val');
 
 		$po_list = $this->Usermanagement_model->po_list($year);
 
@@ -439,7 +459,7 @@ class User_management extends \CodeIgniter\Controller {
 
 	public function user_list($value=''){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$this->db->select('user.*, role.role_name');
@@ -464,8 +484,8 @@ class User_management extends \CodeIgniter\Controller {
 			exit();
 		}
 
-		$year = $this->input->post('year_val');
-		$country = $this->input->post('country_val');
+		$year = $this->request->getVar('year_val');
+		$country = $this->request->getVar('country_val');
 
 		$this->db->select('GROUP_CONCAT(crop_id) as crops');
 		$this->db->where('year_id', $year)->where('status', 1)->where_in('country_id', $country);
@@ -492,7 +512,7 @@ class User_management extends \CodeIgniter\Controller {
 			exit();
 		}
 
-		$action = $this->input->post('action');
+		$action = $this->request->getVar('action');
 		if(!$action || strlen($action) === 0) {
 			echo json_encode(array(
 				'status' => 0,
@@ -501,15 +521,15 @@ class User_management extends \CodeIgniter\Controller {
 			exit();
 		}
 
-		$search_user = $this->input->post('search_user');
-		$year_val = $this->input->post('year_val');
-		$country_val = $this->input->post('country_val');
-		$crop_val = $this->input->post('crop_val');
+		$search_user = $this->request->getVar('search_user');
+		$year_val = $this->request->getVar('year_val');
+		$country_val = $this->request->getVar('country_val');
+		$crop_val = $this->request->getVar('crop_val');
 
-		$program_val = $this->input->post('program_val');
-		$cluster_val = $this->input->post('cluster_val');
-		$indicator_val = $this->input->post('indicator_val');
-		$subindicator_val = $this->input->post('subindicator_val');
+		$program_val = $this->request->getVar('program_val');
+		$cluster_val = $this->request->getVar('cluster_val');
+		$indicator_val = $this->request->getVar('indicator_val');
+		$subindicator_val = $this->request->getVar('subindicator_val');
 
 		// Clear old assignments according to posted action
 		switch ($action) {
@@ -578,7 +598,7 @@ class User_management extends \CodeIgniter\Controller {
 					'sub_indicator_id' => NULL,
 					'added_by' => $this->session->get('login_id'),
 					'added_datetime' => date('Y-m-d H:i:s'),
-					'ip_address' => $this->input->ip_address(),
+					'ip_address' => $this->request->getIPAddress(),
 					'status' => 1
 				);
 				array_push($all_poIds, $po);
@@ -616,7 +636,7 @@ class User_management extends \CodeIgniter\Controller {
 					'sub_indicator_id' => NULL,
 					'added_by' => $this->session->get('login_id'),
 					'added_datetime' => date('Y-m-d H:i:s'),
-					'ip_address' => $this->input->ip_address(),
+					'ip_address' => $this->request->getIPAddress(),
 					'status' => 1
 				);
 				array_push($all_poIds, $get_outputinfo['lkp_program_id']);
@@ -654,7 +674,7 @@ class User_management extends \CodeIgniter\Controller {
 					'sub_indicator_id' => NULL,
 					'added_by' => $this->session->get('login_id'),
 					'added_datetime' => date('Y-m-d H:i:s'),
-					'ip_address' => $this->input->ip_address(),
+					'ip_address' => $this->request->getIPAddress(),
 					'status' => 1
 				);
 				array_push($all_poIds, $get_outputinfo['lkp_program_id']);
@@ -692,7 +712,7 @@ class User_management extends \CodeIgniter\Controller {
 					'sub_indicator_id' => $subindicator,
 					'added_by' => $this->session->get('login_id'),
 					'added_datetime' => date('Y-m-d H:i:s'),
-					'ip_address' => $this->input->ip_address(),
+					'ip_address' => $this->request->getIPAddress(),
 					'status' => 1
 				);
 				
@@ -718,7 +738,7 @@ class User_management extends \CodeIgniter\Controller {
 
 	public function user_mapping_details(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$user_id = $this->uri->segment(3);
@@ -779,7 +799,7 @@ class User_management extends \CodeIgniter\Controller {
 			exit();
 		}
 
-		$user = $this->input->post('user_id');
+		$user = $this->request->getVar('user_id');
 		if(!$user || strlen($user) === 0) {
 			echo json_encode(array(
 				'status' => 0,
@@ -816,8 +836,8 @@ class User_management extends \CodeIgniter\Controller {
 			exit();
 		}
 
-		$role = $this->input->post('role');
-		$user = $this->input->post('user_id');
+		$role = $this->request->getVar('role');
+		$user = $this->request->getVar('user_id');
 		if(!$user || strlen($user) === 0
 		|| !$role || strlen($role) === 0) {
 			echo json_encode(array(
@@ -841,7 +861,7 @@ class User_management extends \CodeIgniter\Controller {
 
 	public function reporting_user(){
 		if($this->session->get('login_id') == '' || $this->session->get('login_id') == NULL){
-			redirect($this->baseurl);
+			return redirect()->to($this->baseurl);
 		}
 
 		$this->db->select('user.user_id, user.first_name, user.last_name, user.email_id, user.role_id, role.role_name, tru.status');

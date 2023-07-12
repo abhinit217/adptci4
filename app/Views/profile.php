@@ -64,7 +64,7 @@
 		<div class="row">
 			<div class="col-md-3">
 				<div class="card fixme" style="padding: 10px;">
-					<div id="holder"><img src="<?php echo base_url(); ?>upload/user/<?php echo $this->session->userdata('image'); ?>" style="width: 100%;">
+					<div id="holder"><img src="<?php echo base_url(); ?>upload/user/<?php echo $this->session->get('image'); ?>" style="width: 100%;">
 					</div>
 	        		<?php echo form_open_multipart('login/change_profile_img/',array('class' => '', 'id' => 'pImgForm', 'name' => 'img_form')); ?>
 		        		<label class="btn-bs-file btn btn-md" style="background-color: black; margin-top: -50px;" data-toggle="tooltip" title="Change profile image">
@@ -138,7 +138,7 @@ $(function(){
 
 <script type="text/javascript">
 	// Define global variable ajaxData
-	var ajaxData = { '<?php echo $this->security->get_csrf_token_name(); ?>' : '<?php echo $this->security->get_csrf_hash(); ?>' };
+	var ajaxData = { '<?= csrf_token() ?>' : '<?= csrf_hash() ?>' };
 	
 	$('body').on('click', '#cpm_btn', function(event) {
 		var old_pass = $('body').find('input[name="old_pass"]').val();
@@ -177,7 +177,7 @@ $(function(){
                 if(data.c_status > 0){
                 	$('body').find('#cp_succ').append('<p style="background-color: #6cc00c; color: #FFFFFF; padding: 10px;">'+data.msg+'</p>').delay(5000).fadeOut(400);
                 	$('#cp_modal_body').html('');
-                	window.location.replace("<?php echo base_url(); ?>auth/logout");
+                	window.location.replace("<?php echo base_url(); ?>login/logout");
                 }
             }
         });
