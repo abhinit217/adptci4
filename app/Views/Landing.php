@@ -465,12 +465,6 @@
 
             </div>
         </section>
-
-        <!--  -->
     </div>
-    
-    <!-- Javascript -->
-    <script type="text/javascript" src="./assets/scripts/index.js"></script>
-    <script type="text/javascript" src="./assets/scripts/utils.js"></script>
 </body>
 </html>
