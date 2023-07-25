@@ -1,0 +1,97 @@
+indicator_id,dimension_id,sub_dimension_id,category_id,indicator_name,description,status
+1,1,1,1,Rainfall onset and cessation,NULL,1
+2,1,1,1,Amount of rainfall received,NULL,1
+3,1,1,2,Average temperatures ,NULL,1
+4,1,1,2,Number of extremely hot or cold days,NULL,1
+5,1,1,2,Incidences & severity of frost,NULL,1
+6,2,2,3,Distance to the main sources of livestock feeds,NULL,1
+7,2,2,3,"Cost of livestock feeds e.g., a bale of fodder",NULL,1
+8,2,2,3,Normalized Difference Vegetation Index (NDVI),NULL,1
+9,2,2,4,Variety of feeds in use,NULL,1
+10,2,2,5,Distance to main water points,NULL,1
+11,2,2,5,Cost of water for livestock,NULL,1
+12,2,2,5,Water levels in water sources that are critical for livestock,NULL,1
+13,2,2,6,Prevalence of pests that are linked to climatic hazards,NULL,1
+14,2,2,6,Prevalence of diseases that are linked to climatic hazards,NULL,1
+15,2,3,7,Quantity of milk produced ,NULL,1
+16,2,3,7,Quantity of meat produced,NULL,1
+17,2,3,7,Number of livestock deaths related to climatic hazards ,NULL,1
+18,2,3,7,Revenue from livestock sector,NULL,1
+19,2,3,8,Proportion of livestock keeping households classified as food insecure ,NULL,1
+20,2,3,8,Proportion of livestock keeping households receiving emergency food aid ,NULL,1
+21,2,3,9,Number of inter/intra- community conflict incidences,NULL,1
+22,3,4,10,Ratio of veterinary service providers to livestock keepers ,NULL,1
+23,3,4,11,Average land ownership/certification per livestock-keeping household,NULL,1
+24,3,4,11,Land access per livestock keeping household,NULL,1
+25,3,4,11,Share of community land available for livestock keeping activities ,NULL,1
+26,3,4,12,Proportion of livestock keeping households engaging in water harvesting & storage,NULL,1
+27,3,4,12,Proportion of functional water sources,NULL,1
+28,3,4,12,System-level investments in water infrastructure development,NULL,1
+29,3,4,12,National-level investments in water infrastructure development in livestock systems,NULL,1
+30,3,4,13,Proportion of livestock keeping households engaging in heat & cold stress reduction interventions on livestock,NULL,1
+31,3,4,13,"Proportion of livestock keeping households engaging in control of diseases and pests that are linked to climate risks e.g., vaccination, treatment, deworming, spraying",NULL,1
+32,3,4,13,Number of vaccination campaigns carried out on diseases related to climate change and proportion of TLUs covered,NULL,1
+33,3,4,14,Establishment & implementation of national livestock breeding programs,NULL,1
+34,3,4,14,Establishment & implementation of national breeding programs/ schemes that are focused on improving the adaptability of livestock to climate change,NULL,1
+35,3,4,15,Proportion of livestock keeping households growing adaptive fodder varieties,NULL,1
+36,3,4,15,Proportion of livestock keeping households adopting improved livestock feeding technologies,NULL,1
+37,3,4,15,Proportion of livestock keeping households engaging in feed preservation practices,NULL,1
+38,3,4,15,Proportion of livestock keeping households engaging in pasture management practices,NULL,1
+39,3,4,15,Proportion of livestock keeping households engaging in collective feed production &/or storage,NULL,1
+40,3,4,15,Proportion of communal lands with grazing plans (Extensive systems),NULL,1
+41,3,5,16,Proportion of livestock keeping households accessing training on climate change adaptation,NULL,1
+42,3,5,16,Number of state & non-state actors capacity built to support adaptation,NULL,1
+43,3,5,16,Number of livestock keepers trained on climate change adaptation,NULL,1
+44,3,5,17,Proportion of livestock keeping households accessing agro-weather information,NULL,1
+45,3,5,17,Utility of agro-weather information ,NULL,1
+46,3,5,17,Presence of sub-national systems offering climate information services,NULL,1
+47,3,5,17,Existence of a functional national-level system for generating and disseminating climate information,NULL,1
+48,3,5,18,Proportion of livestock keeping households accessing information on livestock pests and diseases,NULL,1
+49,3,5,18,Utility of information on livestock diseases,NULL,1
+50,3,5,18,Existence of subnational livestock disease surveillance systems,NULL,1
+51,3,5,18,Existence of a functional national livestock disease surveillance system,NULL,1
+52,3,5,19,Proportion of livestock keeping households accessing information on livestock and products markets,NULL,1
+53,3,5,19,Utility of livestock market information services ,NULL,1
+54,3,5,19,Existence of sub-national market information systems for livestock & livestock products ,NULL,1
+55,3,5,19,Existence of a functional national market information system for livestock & livestock products,NULL,1
+56,3,5,19,Existence of national market information systems linked to regional livestock & livestock products market information systems,NULL,1
+57,3,5,20,Existence of a knowledge management systems,NULL,1
+58,3,6,21,Proportion of livestock keeping households with access to livestock mobility paths/ migratory routes ,NULL,1
+59,3,6,21,Presence of sub-national landscape-level land use plans that address climate change adaptation needs of livestock keepers,NULL,1
+60,3,6,21,Existence of a national land-use plan that recognizes climate change adaptation needs of livestock keepers,NULL,1
+61,3,6,21,Presence of designated and recognized livestock mobility paths (Extensive systems),NULL,1
+62,3,6,21,Existence of water management institutions and plans,NULL,1
+63,3,6,21,Existence of policies for defining land tenure,NULL,1
+64,3,6,22,"Extent of women's control over decision-making on productive assets e.g., livestock, livestock products, land, and incomes",NULL,1
+65,3,6,23,"Existence of socially and economically inclusive programs and interventions, particularly with a focus on supporting the youth to engage in adaptive actions",NULL,1
+66,3,6,24,Proportion of livestock-keeping households with membership in social support groups & networks,NULL,1
+67,3,6,24,Number of registered social groups & networks existing within the landscape,NULL,1
+68,3,6,24,Number of livestock keepers that are members of social support groups and networks disaggregated by gender,NULL,1
+69,3,6,25,Presence of subnational plans and strategies that are relevant to climate change adaptation in livestock systems,NULL,1
+70,3,6,25,"Presence of subnational institutional frameworks and programs for the implementation of plans, policies, and strategies that are relevant to climate change adaptation in livestock systems",NULL,1
+71,3,6,25,"Existence of national plans, policies, and strategies that are supportive of climate change adaptation in livestock systems",NULL,1
+72,3,6,25,"Existence of national institutional frameworks for the implementation of plans, policies, and strategies that are relevant to climate change adaptation in livestock systems",NULL,1
+73,3,7,26,Ratio of average farmgate to retail price for milk,NULL,1
+74,3,7,27,Number of inputs suppliers available,NULL,1
+75,3,7,27,Distance to the nearest livestock inputs supplier,NULL,1
+76,3,7,27,Livestock keepers satisfaction with the quality of the inputs,NULL,1
+77,3,7,28,Proportion of livestock keeping households with active membership in functional livestock and livestock products marketing group ,NULL,1
+78,3,7,28,Number of functional marketing groups for livestock and livestock products within the subnational administrative units,NULL,1
+79,3,7,29,Number of households with livestock insurance,NULL,1
+80,3,7,29,Proportion of Tropical Livestock Units in the sub-national administrative units covered by livestock insurance,NULL,1
+81,3,7,30,Number of Tropical Livestock Units in a sub-national administrative units undergoing emergency livestock offtake programs,NULL,1
+82,3,7,30,Number of sub-national administration units undertaking emergency livestock offtake programs,NULL,1
+83,3,7,31,Proportion of national budgetary allocation to the livestock sub-sector from the total budgetary allocation,NULL,1
+84,3,7,31,Proportion of livestock sector budget allocated to adaptation in the sector,NULL,1
+85,3,7,31,Amount of resources from non-state actors invested towards adaptation in livestock systems,NULL,1
+86,3,7,31,Resources allocated to research in livestock systems,NULL,1
+87,3,7,31,"Resources allocated to research relevant to climate change adaptation in livestock systems, including research on feeds",NULL,1
+88,3,7,31,Number of credit options available to livestock keepers,NULL,1
+89,3,7,31,Number of financial products supporting livestock sub-sector adaptation,NULL,1
+90,3,7,31,Number of livestock keepers taking up financial products,NULL,1
+91,1,1,2,Number of extremely cold days,NULL,1
+92,2,2,6,Number of TLUs affected by diseases that are linked to climatic hazards,NULL,1
+93,2,2,6,Number of TLUs affected by pests that are linked to climatic hazards,NULL,1
+94,3,4,13,Number of TLUs covered by the vaccination campaigns,NULL,1
+95,3,4,14,Presence of subnational administrative units with breeding programs/ schemes that are focused on improving adaptability of livestock to climate change,NULL,1
+96,3,4,14,presence of subnational administrative units with livestock breeding programs,NULL,1

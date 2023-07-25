@@ -407,6 +407,7 @@ class Reporting extends Controller {
 		}
 
 		$result= array();
+		
 		if(!empty($this->uri->getSegment('4')) && $this->session->get('role')==1){
 			$result['country_id'] = $this->uri->getSegment('4');
 		}else{
@@ -418,7 +419,7 @@ class Reporting extends Controller {
 			}
 			$result['country_id'] = $country_id;
 		}
-
+		
 		return view('common/header', $result)
 			.view('dashboard/c_dashboard', $result)
 			.view('common/footer');

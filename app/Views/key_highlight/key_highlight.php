@@ -765,8 +765,8 @@ z-index: 999;
 <script src="https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
 
-<input id="rootUrl" type="hidden" value="<?php echo base_url(); ?>api/">
-<input id="imgUrl" type="hidden" value="<?php echo base_url(); ?>include/key_highlight/assets/images/">
+<input id="rootUrl" type="hidden" value="<?php echo base_url(); ?>api">
+<input id="imgUrl" type="hidden" value="<?php echo base_url(); ?>include/key_highlight/assets/images">
 
 <div class="app-content page-body">
     <div class="container-fluid" id="main-body">

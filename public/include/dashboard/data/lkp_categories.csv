@@ -1,0 +1,32 @@
+category_id,dimension_id,sub_dimension_id,category_name,category_desc,status
+1,1,1,Rainfall patterns,NULL,1
+2,1,1,Temperature patterns,NULL,1
+3,2,2,Pasture & feed availability,NULL,1
+4,2,2,Pasture & feed quality,NULL,1
+5,2,2,Water availability,NULL,1
+6,2,2,Livestock health,NULL,1
+7,2,3,Livestock production,NULL,1
+8,2,3,Food security,NULL,1
+9,2,3,Livestock-related resource conflicts,NULL,1
+10,3,4,Extension & veterinary services,NULL,1
+11,3,4,Land management and access,NULL,1
+12,3,4,Water management and access,NULL,1
+13,3,4,Livestock care technologies and practices,NULL,1
+14,3,4,Livestock breeding,NULL,1
+15,3,4,Feed management,NULL,1
+16,3,5,Capacity building on adaptation,NULL,1
+17,3,5,Climate information services,NULL,1
+18,3,5,Surveillance & disease information systems,NULL,1
+19,3,5,Market information systems,NULL,1
+20,3,5,Research and development,NULL,1
+21,3,6,"Plans & rules for securing access to & sound management of land, water & pasture",NULL,1
+22,3,6,Cultural norms that are relevant for socially differentiated adaptive capacity,NULL,1
+23,3,6,Policies & economic environment and its impact on socially differentiated adaptive capacity,NULL,1
+24,3,6,Social support groups & networks,NULL,1
+25,3,6,Forward-looking governance & decision making,NULL,1
+26,3,7,Market dynamics,NULL,1
+27,3,7,Inputs market,NULL,1
+28,3,7,Marketing organizations & associations,NULL,1
+29,3,7,Livestock insurance,NULL,1
+30,3,7,Livestock offtake programs,NULL,1
+31,3,7,FInancial investment towards adaptation,NULL,1

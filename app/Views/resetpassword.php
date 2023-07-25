@@ -105,7 +105,7 @@
         var formData = new FormData($(this)[0]);
         formData.append('forgot_pass', '<?php echo $this->uri->segment(3); ?>')
         $.ajax({
-          url: '<?php echo base_url(); ?>password/changepass/',
+          url: '<?php echo base_url(); ?>password/changepass',
           type: 'POST',
           data: formData,
           processData: false,

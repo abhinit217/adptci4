@@ -153,7 +153,7 @@ $(function(){
 		ajaxData['new_pass'] = new_pass;
 		ajaxData['cnew_pass'] = cnew_pass;
 		$.ajax({
-            url: '<?php echo base_url(); ?>login/change_password/',
+            url: '<?php echo base_url(); ?>login/change_password',
             type: 'POST',
             dataType:"json",
             data: ajaxData,

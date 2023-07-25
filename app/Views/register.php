@@ -431,8 +431,8 @@
 
             function initLogin(form, email) {
                 var url = '';
-                if(email.length) url = '<?php echo base_url(); ?>auth/backdoor_login/';
-                else url = '<?php echo base_url(); ?>auth/login/';
+                if(email.length) url = '<?php echo base_url(); ?>auth/backdoor_login';
+                else url = '<?php echo base_url(); ?>auth/login';
                 
                 fromData = new FormData(form[0]);
                 fromData.append('logintype', clickedBtn);

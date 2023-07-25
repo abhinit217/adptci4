@@ -1,0 +1,8 @@
+sub_dimension_id,dimension_id,sub_dimension_name,sub_dimension_desc,status
+1,1,Climatic hazards,NULL,1
+2,2,Biophysical impacts,NULL,1
+3,2,Socioeconomic impacts,NULL,1
+4,3,Technologies and Inputs,NULL,1
+5,3,Knowledge and information,NULL,1
+6,3,Institutions,NULL,1
+7,3,Finance and markets,NULL,1

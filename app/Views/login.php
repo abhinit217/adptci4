@@ -261,7 +261,7 @@
 														<small class="form-check-label font-css" for="exampleCheck1">Remember
 															Me</small> -->
                                                         <a class="float-right text-dark"
-                                                            href="<?php echo base_url(); ?>password/lostpassword/"><small
+                                                            href="<?php echo base_url(); ?>password/lostpassword"><small
                                                                 class="form-check-label font-css float-right"
                                                                 for="exampleCheck2">Forgot
                                                                 Password?</small></a>
@@ -447,8 +447,8 @@
 
             function initLogin(form, email) {
                 var url = '';
-                if(email.length) url = '<?php echo base_url(); ?>auth/backdoor_login/';
-                else url = '<?php echo base_url(); ?>auth/login/';
+                if(email.length) url = '<?php echo base_url(); ?>auth/backdoor_login';
+                else url = '<?php echo base_url(); ?>auth/login';
                 
                 fromData = new FormData(form[0]);
                 fromData.append('logintype', clickedBtn);

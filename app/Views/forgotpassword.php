@@ -162,7 +162,7 @@
 
         var formData = new FormData($(this)[0]);
         $.ajax({
-          url: '<?php echo base_url(); ?>password/resetpassword/',
+          url: '<?php echo base_url(); ?>password/resetpassword',
           type: 'POST',
           data: formData,
           processData: false,

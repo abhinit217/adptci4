@@ -1,0 +1,180 @@
+subnational_id,subnational,country_id,production_system,production_system_id,status
+1001,Nairobi,1,Mixed,2,1
+1002,Mombasa,1,Mixed,2,1
+1003,Kwale,1,Mixed,2,1
+1004,Kilifi,1,Mixed,2,1
+1005,Tana River,1,Grazing,1,1
+1006,Lamu,1,Mixed,2,1
+1007,Taita Taveta,1,Grazing,1,1
+1008,Garissa,1,Grazing,1,1
+1009,Wajir,1,Grazing,1,1
+1010,Mandera,1,Grazing,1,1
+1011,Marsabit,1,Grazing,1,1
+1012,Isiolo,1,Grazing,1,1
+1013,Meru,1,Mixed,2,1
+1014,Tharaka-Nithi,1,Mixed,2,1
+1015,Embu,1,Mixed,2,1
+1016,Kitui,1,Mixed,2,1
+1017,Machakos,1,Mixed,2,1
+1018,Nyandarua,1,Mixed,2,1
+1019,Nyeri,1,Mixed,2,1
+1020,Kirinyaga,1,Mixed,2,1
+1021,Murang'a,1,Mixed,2,1
+1022,Kiambu,1,Mixed,2,1
+1023,Turkana,1,Grazing,1,1
+1024,West Pokot,1,Mixed,2,1
+1025,Samburu,1,Grazing,1,1
+1026,Uasin Gishu,1,Mixed,2,1
+1027,Elegeyo-Marakwet,1,Mixed,2,1
+1028,Nandi,1,Mixed,2,1
+1029,Baringo,1,Grazing,1,1
+1030,Laikipia,1,Grazing,1,1
+1031,Nakuru,1,Mixed,2,1
+1032,Narok,1,Grazing,1,1
+1033,Kajiado,1,Grazing,1,1
+1034,Makueni,1,Mixed,2,1
+1035,Kericho,1,Mixed,2,1
+1036,Kakamega,1,Mixed,2,1
+1037,Vihiga,1,Mixed,2,1
+1038,Bungoma,1,Mixed,2,1
+1039,Busia,1,Mixed,2,1
+1040,Siaya,1,Mixed,2,1
+1041,Homa Bay,1,Mixed,2,1
+1042,Migori,1,Mixed,2,1
+1043,Kisii,1,Mixed,2,1
+1044,Bomet,1,Mixed,2,1
+1045,Nyamira,1,Mixed,2,1
+1046,Kisumu,1,Mixed,2,1
+1047,Trans-Nzoia,1,Mixed,2,1
+2001,Adjumani,2,Grazing,1,1
+2002,Apac,2,Mixed,2,1
+2003,Arua,2,Mixed,2,1
+2004,Bugiri,2,Mixed,2,1
+2005,Bundibugyo,2,Mixed,2,1
+2006,Bushenyi,2,Mixed,2,1
+2007,Busia,2,Mixed,2,1
+2008,Gulu,2,Grazing,1,1
+2009,Hoima,2,Mixed,2,1
+2010,Iganga,2,Mixed,2,1
+2011,Jinja,2,Mixed,2,1
+2012,Kabale,2,Mixed,2,1
+2013,Kabarole,2,Mixed,2,1
+2014,Kaberamaido,2,Mixed,2,1
+2015,Kalangala,2,NULL,NULL,1
+2016,Kampala,2,Mixed,2,1
+2017,Kamuli,2,Mixed,2,1
+2018,Kamwenge,2,Mixed,2,1
+2019,Kanungu,2,Mixed,2,1
+2020,Kapchorwa,2,Mixed,2,1
+2021,Kasese,2,Mixed,2,1
+2022,Katakwi,2,Mixed,2,1
+2023,Kayunga,2,Mixed,2,1
+2024,Kibale,2,Mixed,2,1
+2025,Kiboga,2,Mixed,2,1
+2026,Kisoro,2,Mixed,2,1
+2027,Kitgum,2,Grazing,1,1
+2028,Kotido,2,Grazing,1,1
+2029,Kumi,2,Mixed,2,1
+2030,Kyenjojo,2,Mixed,2,1
+2031,Lake Albert,2,Mixed,2,1
+2032,Lake Victoria,2,NULL,NULL,1
+2033,Lira,2,Mixed,2,1
+2034,Luwero,2,Mixed,2,1
+2035,Masaka,2,Mixed,2,1
+2036,Masindi,2,Mixed,2,1
+2037,Mayuge,2,Mixed,2,1
+2038,Mbale,2,Mixed,2,1
+2039,Mbarara,2,Mixed,2,1
+2040,Moroto,2,Grazing,1,1
+2041,Moyo,2,Grazing,1,1
+2042,Mpigi,2,Mixed,2,1
+2043,Mubende,2,Mixed,2,1
+2044,Mukono,2,Mixed,2,1
+2045,Nakapiripirit,2,Grazing,1,1
+2046,Nakasongola,2,Mixed,2,1
+2047,Nebbi,2,Mixed,2,1
+2048,Ntungamo,2,Mixed,2,1
+2049,Pader,2,Mixed,2,1
+2050,Pallisa,2,Mixed,2,1
+2051,Rakai,2,Mixed,2,1
+2052,Rukungiri,2,Mixed,2,1
+2053,Sembabule,2,Mixed,2,1
+2054,Sironko,2,Mixed,2,1
+2055,Soroti,2,Mixed,2,1
+2056,Tororo,2,Mixed,2,1
+2057,Wakiso,2,Mixed,2,1
+2058,Yumbe,2,Grazing,1,1
+3001,Afder,3,Grazing,1,1
+3002,Agnuak,3,Grazing,1,1
+3003,Alaba,3,Mixed,2,1
+3004,Arsi,3,Mixed,2,1
+3005,Asosa,3,Grazing,1,1
+3006,Awi/Agew,3,Mixed,2,1
+3007,Bale,3,Grazing,1,1
+3008,Basketo,3,Mixed,2,1
+3009,Bench Maji,3,Mixed,2,1
+3010,Borena,3,Grazing,1,1
+3011,Central,3,Mixed,2,1
+3012,Dawro,3,Mixed,2,1
+3013,Dire Dawa,3,Grazing,1,1
+3014,Doolo,3,Grazing,1,1
+3015,East Gojam,3,Mixed,2,1
+3016,East Harerge,3,Mixed,2,1
+3017,East Shewa,3,Mixed,2,1
+3018,East Wellega,3,Mixed,2,1
+3019,Eastern,3,Mixed,2,1
+3020,Fafan,3,Grazing,1,1
+3021,Gamo Gofa,3,Mixed,2,1
+3022,Gedio,3,Mixed,2,1
+3023,Guji,3,Mixed,2,1
+3024,Gurage,3,Mixed,2,1
+3025,Hadiya,3,Mixed,2,1
+3026,Hareri,3,Mixed,2,1
+3027,Horo Guduru,3,Mixed,2,1
+3028,Ilubabor,3,Mixed,2,1
+3029,Jarar,3,Grazing,1,1
+3030,Jimma,3,Mixed,2,1
+3031,Keffa,3,Mixed,2,1
+3032,Kelem Wellega,3,Mixed,2,1
+3033,Kemashi,3,Grazing,1,1
+3034,Konta,3,Grazing,1,1
+3035,Korahe,3,Grazing,1,1
+3036,KT,3,Mixed,2,1
+3037,Liben,3,Grazing,1,1
+3038,Majang,3,Mixed,2,1
+3039,Metekel,3,Grazing,1,1
+3040,Nogob,3,Grazing,1,1
+3041,North Gonder,3,Grazing,1,1
+3042,North Shewa(R3),3,Mixed,2,1
+3043,North Shewa(R4),3,Mixed,2,1
+3044,North Western,3,Mixed,2,1
+3045,North Wollo,3,Mixed,2,1
+3046,Nuer,3,Grazing,1,1
+3047,Oromia,3,Mixed,2,1
+3048,Region 14,3,Mixed,2,1
+3049,Segen Peoples',3,Mixed,2,1
+3050,Selti,3,Mixed,2,1
+3051,Shabelle,3,Grazing,1,1
+3052,Sheka,3,Mixed,2,1
+3053,Sidama,3,Mixed,2,1
+3054,Siti,3,Grazing,1,1
+3055,South Gonder,3,Mixed,2,1
+3056,South Omo,3,Mixed,2,1
+3057,South West Shewa,3,Mixed,2,1
+3058,South Wollo,3,Mixed,2,1
+3059,Southern,3,Mixed,2,1
+3060,Special Woreda,3,Mixed,2,1
+3061,Wag Himra,3,Mixed,2,1
+3062,West Arsi,3,Mixed,2,1
+3063,West Gojam,3,Mixed,2,1
+3064,West Harerge,3,Mixed,2,1
+3065,West Shewa,3,Mixed,2,1
+3066,West Wellega,3,Mixed,2,1
+3067,Western,3,Mixed,2,1
+3068,Wolayita,3,Mixed,2,1
+3069,Yem,3,Mixed,2,1
+3070,Awsiresu,3,Grazing,1,1
+3071,Kelbetiresu,3,Grazing,1,1
+3072,Gebiresu,3,Mixed,2,1
+3073,Fentiresu,3,Grazing,1,1
+3074,Hari Resu,3,Grazing,1,1

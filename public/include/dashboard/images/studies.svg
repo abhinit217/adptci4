@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="27px" height="31px" viewBox="0 0 27 31" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.2 (78181) - https://sketchapp.com -->
+    <title>Studies</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Overview-Dashboard" transform="translate(-64.000000, -731.000000)">
+            <g id="Group-6" transform="translate(32.000000, 657.000000)">
+                <g id="Studies" transform="translate(32.000000, 74.000000)">
+                    <g id="Group-5" transform="translate(0.000000, 10.000000)" stroke="#666666">
+                        <path d="M0.5,1.25810163 C0.5,6.0367521 0.5,6.0904025 0.5,10.0618091 C0.5,13.7560177 0.5,13.9681217 0.5,17.9974105 C3.62107428,16.7700695 7.95875379,17.6030228 13.5167638,20.436145 C19.4114114,17.8638104 23.7267267,17.0377223 26.5,18.0160444 C26.5,14.4078203 26.5,14.1809393 26.5,10.5217021 C26.5,6.17583438 26.5,6.11785725 26.5,1.25885557 C24.9560466,-0.213682279 20.6614922,0.545302226 13.7079536,3.72542535 L13.4975044,3.82167195 L13.2879357,3.72352279 C6.37464838,0.485761397 2.0863452,-0.272249356 0.5,1.25810164 Z" id="Rectangle" fill-opacity="0" fill="#238E58"></path>
+                        <path d="M13.5,3.59309889 L13.5,20.3274739" id="Line" fill="#FFFFFF" stroke-linecap="square"></path>
+                    </g>
+                    <circle id="Oval" fill="#EF8739" cx="13.5" cy="4.5" r="4.5"></circle>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

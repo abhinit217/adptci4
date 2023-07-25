@@ -1,0 +1,116 @@
+button.easy-button-button.leaflet-bar-part {
+    background: #fff;
+    border-radius: 5px;
+    border: none;
+    height: 44px;
+    width: 44px;
+}
+
+.actual_text {
+    font-size: 15px;
+    color: #333333;
+}
+
+.count_variance {
+    font-size: 16px;
+    color: #333333;
+    text-align: center;
+    font-weight: 600;
+}
+
+.text_count {
+    font-size: 20px;
+    color: #695965;
+    letter-spacing: -0.12px;
+    text-align: left;
+    width: 152px;
+    font-weight: 600;
+    font-style: normal !important;
+}
+
+.mtm-15px {
+    margin-top: -7px;
+}
+
+.actual_count {
+    font-size: 16px;
+    color: #151515;
+    font-weight: 600;
+    line-height: 22px;
+}
+
+#map-legend {
+    background: #f4f4f4b0;
+    /* background: transparent; */
+    height: auto;
+    width: auto;
+    padding: 3px;
+    z-index: 1000;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+
+.highcharts-axis-line {
+    display: none;
+}
+
+.highcharts-tick {
+    display: none;
+}
+
+.modal-content {
+    background-color: transparent !important;
+    border: 0px !important
+}
+
+.modal-header {
+    border: 0px !important
+}
+
+a.d-breadcrumb{
+    color: black;
+    text-decoration: none;
+}
+
+a.d-breadcrumb:hover{
+    cursor: pointer;
+    font-weight: bolder;
+}
+
+a.d-next:hover, a.s-next:hover, a.c-next:hover, a.i-next:hover{
+    font-weight: bolder;
+    cursor: pointer;
+}
+
+
+button.easy-button-button.leaflet-bar-part {
+    background: #fff;
+    border-radius: 5px;
+    border: none;
+    height: 30px;
+    width: 30px;
+}
+
+.leaflet-touch .leaflet-control-layers-toggle {
+    width: 30px;
+    height: 30px;
+}
+
+.table td,
+.table th {
+    padding: 10px;
+    vertical-align: middle;
+    border-top: 0px solid #dee2e6;
+}
+
+.dot {
+    height: 16.5px;
+    width: 16.5px;
+    border-radius: 50%;
+    border: 1px solid gray;
+    display: inline-block;
+    margin-top: 10px;
+    margin-bottom: -1px;
+    padding: 3px;
+}
